@@ -35,7 +35,7 @@ const Profile = () => {
   const handleUpdate = useCallback(async () => {
     try {
       const res = await axios.patch(
-        'https://stylenest-backend-g16m.onrender.com/user/profile/',
+        'http://127.0.0.1:8000/api/user/profile/',
         formData
       );
       setUser(res.data.data);

@@ -1,56 +1,81 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Heart, ShoppingBag, Star } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // adjust path if needed
 
-const ProductCard = React.memo(({ product, initialWishlisted = false }) => {
+export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
+  const { token } = useAuth(); // get token from AuthContext
 
-  // Add to cart
-  const handleAddToCart = useCallback(async () => {
+  console.log('Token in localStorage:', localStorage.getItem("access_token"));
+
+
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
+
+  const imageUrl = product.image
+    ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+    : 'https://via.placeholder.com/300x300?text=No+Image';
+
+  // Add to Cart
+  const handleAddToCart = async () => {
+    if (!token) {
+      toast.error('You need to be logged in to add to cart.');
+      return;
+    }
+
     try {
-      await axios.post('/api/cart/add/', { product_id: product.id, quantity: 1 });
+      await axios.post(
+        `http://127.0.0.1:8000/api/cart/add/`,
+        { product_id: product.id, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       toast.success('Product added to cart');
     } catch (error) {
-      toast.error('You need to be logged in to add to cart.');
+      toast.error('Something went wrong adding to cart.');
     }
-  }, [product.id]);
+  };
 
-  // Add to wishlist
-  const handleAddToWishlist = useCallback(async () => {
+  // Add to Wishlist
+  const handleAddToWishlist = async () => {
+    if (!token) {
+      toast.error('You need to be logged in to use wishlist.');
+      return;
+    }
+
     try {
-      await axios.post('/api/cart/wishlist/', { product_id: product.id });
+      await axios.post(
+        `http://127.0.0.1:8000/api/cart/wishlist/`,
+        { product_id: product.id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setIsWishlisted(true);
       toast.success('Product added to wishlist!');
     } catch (error) {
-      if (error.response?.status === 401) {
-        toast.error('You need to be logged in to use wishlist.');
-      } else {
-        toast.error('Something went wrong adding to wishlist.');
-      }
+      toast.error('Something went wrong adding to wishlist.');
     }
-  }, [product.id]);
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition duration-300 flex flex-col">
       <div className="relative">
         <Link to={`/productdetails/${product.id}`}>
           <img
-            src={product.image}
+            src={imageUrl}
             alt={product.name}
-            className="w-full h-100 object-cover rounded-xl"
+            className="w-full h-80 object-cover rounded-xl"
           />
         </Link>
 
         <button
           onClick={handleAddToWishlist}
-          className="absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:bg-pink-100"
-          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className="absolute top-2 right-2 bg-white p-2 rounded-full shadow hover:bg-pink-100"
+          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
           <Heart
-            size={18}
-            className={isWishlisted ? "fill-rose-500 text-rose-500" : "text-rose-500"}
+            size={20}
+            className={isWishlisted ? 'fill-rose-500 text-rose-500' : 'text-rose-500'}
           />
         </button>
       </div>
@@ -59,9 +84,10 @@ const ProductCard = React.memo(({ product, initialWishlisted = false }) => {
         <Link to={`/productdetails/${product.id}`}>
           <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
         </Link>
+
         <div className="flex items-center gap-1 mt-1">
           <Star size={16} className="text-yellow-400 fill-yellow-400" />
-          <span className="text-sm text-gray-600">{product.rating}</span>
+          <span className="text-sm text-gray-600">{product.rating || 0}</span>
         </div>
 
         <div className="flex justify-between items-center mt-3">
@@ -70,6 +96,7 @@ const ProductCard = React.memo(({ product, initialWishlisted = false }) => {
               ₹{product.price}
             </span>
           </Link>
+
           <button
             onClick={handleAddToCart}
             className="flex items-center bg-gradient-to-r from-rose-500 to-pink-500 text-white text-sm px-3 py-2 rounded-lg hover:opacity-90 shadow-md transition"
@@ -80,6 +107,4 @@ const ProductCard = React.memo(({ product, initialWishlisted = false }) => {
       </div>
     </div>
   );
-});
-
-export default ProductCard;
+}

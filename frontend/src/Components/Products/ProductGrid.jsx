@@ -1,22 +1,19 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 
-export default function ProductGrid({ products = [] }) {
-  const productList = React.useMemo(() => (Array.isArray(products) ? products : []), [products]);
+export default function ProductGrid({ products }) {
+  const productList = Array.isArray(products) ? products : [];
 
-  const productCards = React.useMemo(() => {
-    return productList.length > 0 ? (
-      productList.map(product => (
-        <ProductCard key={product.id || product._id} product={product} />
-      ))
-    ) : (
-      <p className="text-center col-span-full">No products available.</p>
-    );
-  }, [productList]);
+  if (!productList.length) {
+    return <p className="text-center col-span-full mt-10 text-gray-500">No products available.</p>;
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-      {productCards}
+      {productList.map((product) => {
+        if (!product) return null;
+        return <ProductCard key={product.id} product={product} />;
+      })}
     </div>
   );
 }

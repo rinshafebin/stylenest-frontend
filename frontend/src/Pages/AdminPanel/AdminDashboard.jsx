@@ -8,7 +8,6 @@ import { ShoppingBag, Users, DollarSign, Star } from "lucide-react";
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Memoize stats to avoid recreating array on each render
   const stats = useMemo(
     () => [
       {

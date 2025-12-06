@@ -13,7 +13,7 @@ import axios from 'axios';
 import Navbar from '../../Components/Common/Navbar';
 import Footer from '../../Components/Common/Footer';
 
-// Status Badge as memoized component
+
 const StatusBadge = React.memo(({ status }) => {
   const statusStyles = {
     Processing: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -121,7 +121,7 @@ const Orders = () => {
   const fetchOrders = useCallback(async () => {
     try {
       const res = await axios.get(
-        'https://stylenest-backend-g16m.onrender.com/api/orders/my-orders/',
+        'http://127.0.0.1:8000/api/orders/user-orders/',
         { withCredentials: true }
       );
       setOrders(res.data);

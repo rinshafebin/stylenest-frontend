@@ -18,7 +18,7 @@ export default function Cart() {
   const fetchCartItems = async () => {
     try {
       const res = await axios.get(
-        'https://stylenest-backend-g16m.onrender.com/api/cart/list/',
+        'http://127.0.0.1:8000/api/cart/list/',
         { withCredentials: true }
       );
       setCartItems(res.data);
@@ -45,7 +45,7 @@ export default function Cart() {
 
     try {
       await axios.patch(
-        `https://stylenest-backend-g16m.onrender.com/api/cart/${id}/update/`,
+        `http://127.0.0.1:8000/api/cart/${id}/update/`,
         { quantity: newQty },
         { withCredentials: true }
       );
@@ -64,7 +64,7 @@ export default function Cart() {
 
     try {
       await axios.delete(
-        `https://stylenest-backend-g16m.onrender.com/api/cart/${id}/remove/`,
+        `http://127.0.0.1:8000/api/cart/${id}/remove/`,
         { withCredentials: true }
       );
       toast.success('Product removed');

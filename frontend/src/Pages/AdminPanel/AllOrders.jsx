@@ -57,7 +57,7 @@ export default function AllOrders() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/admin-orders/");
+      const res = await axios.get(" http://127.0.0.1:8000/api/orders/admin-orders/");
       setOrders(res.data);
     } catch (error) {
       console.error("Failed to fetch orders:", error);

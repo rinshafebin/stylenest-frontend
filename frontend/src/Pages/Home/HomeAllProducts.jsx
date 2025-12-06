@@ -5,14 +5,15 @@ import Navbar from '../../Components/Common/Navbar';
 import Footer from '../../Components/Common/Footer';
 import toast from 'react-hot-toast';
 
-export default function AllProducts() {
+export default function HomeAllProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get('/api/products/list'); 
-      setProducts(response.data);
+      const response = await axios.get('http://127.0.0.1:8000/api/products/list'); 
+      setProducts(response.data.results || []);
+      console.log('Fetched products:', response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast.error('Failed to load products. Please try again later.');

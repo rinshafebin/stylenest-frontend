@@ -25,7 +25,7 @@ export default function ShippingAddressForm() {
   const fetchAddress = useCallback(async () => {
     try {
       const res = await axios.get(
-        "https://stylenest-backend-g16m.onrender.com/orders/shipping/"
+        "http://127.0.0.1:8000/api/orders/shipping-address/"
       );
       if (res.data) setFormData(res.data);
     } catch {
@@ -50,7 +50,7 @@ export default function ShippingAddressForm() {
     setSaving(true);
     try {
       await axios.post(
-        "https://stylenest-backend-g16m.onrender.com/orders/shipping/",
+        "http://127.0.0.1:8000/api/orders/shipping-address/",
         formData
       );
       toast.success("Shipping address saved successfully!");

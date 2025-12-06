@@ -11,12 +11,15 @@ export default function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
 
+  // Use environment variable for backend URL
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
+
   // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `https://stylenest-backend-g16m.onrender.com/api/products/${id}/`
+          `${BACKEND_URL}/api/products/${id}/`
         );
         setProduct(response.data);
       } catch (error) {
@@ -25,14 +28,14 @@ export default function ProductDetails() {
       }
     };
     fetchProduct();
-  }, [id]);
+  }, [id, BACKEND_URL]);
 
   // Add product to cart
   const handleAddToCart = async () => {
     if (!product) return;
     try {
       await axios.post(
-        "https://stylenest-backend-g16m.onrender.com/api/cart/add/",
+        `${BACKEND_URL}/api/cart/add/`,
         {
           product_id: product.id,
           quantity: 1,
@@ -51,7 +54,7 @@ export default function ProductDetails() {
     if (!product) return;
     try {
       await axios.post(
-        "https://stylenest-backend-g16m.onrender.com/api/cart/wishlist/",
+        `${BACKEND_URL}/api/cart/wishlist/`,
         { product_id: product.id },
         { withCredentials: true }
       );
@@ -71,6 +74,11 @@ export default function ProductDetails() {
     );
   }
 
+  // Construct image URL safely
+  const imageUrl = product.image
+    ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+    : 'https://via.placeholder.com/500x500?text=No+Image';
+
   return (
     <div className="bg-white min-h-screen">
       <Navbar />
@@ -79,7 +87,7 @@ export default function ProductDetails() {
         {/* Product Image */}
         <div className="flex justify-center">
           <img
-            src={product.image}
+            src={imageUrl}
             alt={product.name}
             className="rounded-2xl shadow-lg max-h-[500px] object-contain bg-white p-4"
           />
@@ -96,7 +104,7 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          <span className="text-3xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent font-extrabold">
+          <span className="text-3xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent mt-4">
             ₹{product.price}
           </span>
 
@@ -144,14 +152,12 @@ export default function ProductDetails() {
       </div>
 
       {/* Product Details */}
-      {Array.isArray(product.details) && product.details.length > 0 && (
+      {product.details && (
         <div className="container mx-auto px-6 py-10 border-t border-gray-200">
           <h2 className="text-xl font-semibold mb-4">Product Details</h2>
-          <ul className="list-disc list-inside text-gray-600 space-y-2">
-            {product.details.map((detail, idx) => (
-              <li key={idx}>{detail}</li>
-            ))}
-          </ul>
+          <div className="text-gray-600 whitespace-pre-line">
+            {product.details}
+          </div>
         </div>
       )}
 

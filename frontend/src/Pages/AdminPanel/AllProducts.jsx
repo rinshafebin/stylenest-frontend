@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // ✅ normal axios
+import axios from "axios"; 
 import { Edit, Trash2, PlusCircle, Search } from "lucide-react";
 import Sidebar from "../../Components/Admin/Sidebar";
 import Header from "../../Components/Admin/Header";
@@ -12,12 +12,22 @@ export default function AllProducts() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const token = localStorage.getItem("access_token"); // get token from localStorage
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       setError("");
+
       try {
-        const res = await axios.get("/admin/all/"); 
+        const res = await axios.get(
+          "http://127.0.0.1:8000/api/products/admin/all/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setProducts(res.data);
       } catch (err) {
         console.error(err);
@@ -30,16 +40,25 @@ export default function AllProducts() {
     };
 
     fetchProducts();
-  }, []); 
+  }, [token]); 
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
-      await axios.delete(`/admin/deleteproduct/${id}/`); // updated delete path
+      await axios.delete(
+        `http://127.0.0.1:8000/api/products/admin/${id}/delete/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setProducts(products.filter((p) => p.id !== id)); // remove deleted product
     } catch (err) {
       console.error(err);
-      alert("Failed to delete product");
+      alert(
+        err?.response?.data?.detail || "Failed to delete product"
+      );
     }
   };
 

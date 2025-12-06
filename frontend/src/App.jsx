@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Login from './Pages/Auth/Login'
 import Register from './Pages/Auth/Register'
 import Homepage from './Pages/Home/HomePage'
@@ -7,9 +7,9 @@ import ChangePassword from './Pages/Auth/ChangePassword'
 import Cart from './Pages/User/Cart'
 import Wishlist from './Pages/User/Wishlist'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Allproducts from './Pages/Home/AllProducts'
+import HomeAllProducts from './Pages/Home/HomeAllProducts'
 import ProductbyCategory from './Pages/Home/ProductsbyCategory'
-import { AuthProvider, useAuth } from './context/AuthContext'
+import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from 'react-hot-toast'
 import ForgetPassword from './Pages/Auth/ForgetPassword'
 import Verifyotp from './Pages/Auth/Verifyotp'
@@ -27,18 +27,7 @@ import ResetPassword from './Pages/Auth/ResetPassword'
 import SearchResults from './Pages/User/SearchResults'
 import ShippingAddressForm from './Pages/User/ShippingAddressForm'
 
-
-export default function AppWrapper() {
-  return (
-    <AuthProvider>
-      <App />
-    </ AuthProvider>
-  )
-}
-const App = () => {
-  const { token } = useAuth();
-
-
+function App() {
   return (
     <BrowserRouter>
       <div className="flex flex-col min-h-screen">
@@ -46,11 +35,11 @@ const App = () => {
 
         <div className="flex-grow">
           <Routes>
-            <Route path='/register' element={< Register />} />
+            <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/' element={<Homepage />} />
 
-            <Route path='/products' element={<Allproducts />} />
+            <Route path='/products' element={<HomeAllProducts />} />
             <Route path='/products/:category' element={<ProductbyCategory />} />
             <Route path='/productdetails/:id' element={<ProductDetails />} />
 
@@ -59,33 +48,33 @@ const App = () => {
             <Route path='/profile' element={<Profile />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path='/orders' element={<Orders />} />
-            <Route path='/shippingaddress' element={< ShippingAddressForm/>} />
-            <Route path="/checkout" element={<Checkout />} /> 
-            
+            <Route path='/shippingaddress' element={<ShippingAddressForm />} />
+            <Route path="/checkout" element={<Checkout />} />
 
-
-            <Route path='/changepassword' element={< ChangePassword />} />
-            <Route path='/forgetpassword' element={< ForgetPassword />} />
+            <Route path='/changepassword' element={<ChangePassword />} />
+            <Route path='/forgetpassword' element={<ForgetPassword />} />
             <Route path='/verifyotp' element={<Verifyotp />} />
             <Route path='/resetpassword' element={<ResetPassword />} />
             <Route path='/logout' element={<Logout />} />
 
-
-
-
-            {/* admin side  */}
+            {/* Admin */}
             <Route path='/adminpanel' element={<AdminDashboard />} />
-            <Route path='/addproduct' element={< AddProduct />} />
-            <Route path='/allproducts' element={< AllProducts />} />
-            <Route path='/allcustomers' element={< Customers />} />
-            <Route path='/allorders' element={< AllOrders />} />
-            <Route path='/editproduct/:id/' element={< EditProduct />} />
-
+            <Route path='/addproduct' element={<AddProduct />} />
+            <Route path='/allproducts' element={<AllProducts />} />
+            <Route path='/allcustomers' element={<Customers />} />
+            <Route path='/allorders' element={<AllOrders />} />
+            <Route path='/editproduct/:id/' element={<EditProduct />} />
           </Routes>
         </div>
-
-      </div >
-    </BrowserRouter >
+      </div>
+    </BrowserRouter>
   )
 }
 
+export default function AppWrapper() {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  )
+}

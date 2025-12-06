@@ -14,7 +14,7 @@ const Wishlist = () => {
   // Fetch wishlist
   const fetchWishlist = useCallback(async () => {
     try {
-      const response = await axios.get('https://stylenest-backend-g16m.onrender.com/wishlist/list/');
+      const response = await axios.get('http://127.0.0.1:8000/api/cart/wishlist/');
       setWishlistItems(response.data || []);
     } catch (error) {
       console.error('Error fetching wishlist:', error);
@@ -34,8 +34,8 @@ const Wishlist = () => {
 
   const handleAddToCart = useCallback(async (productId, itemId) => {
     try {
-      await axios.post('https://stylenest-backend-g16m.onrender.com/cart/add/', { product_id: productId, quantity: 1 });
-      await axios.delete(`https://stylenest-backend-g16m.onrender.com/wishlist/remove/${productId}/`);
+      await axios.post('http://127.0.0.1:8000/api/cart/add/', { product_id: productId, quantity: 1 });
+      await axios.delete(`http://127.0.0.1:8000/api/cart/${productId}/remove/`);
       setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
       toast.success('Item added to cart!');
     } catch (error) {
@@ -46,7 +46,7 @@ const Wishlist = () => {
 
   const handleRemoveFromWishlist = useCallback(async (itemId, productId) => {
     try {
-      await axios.delete(`https://stylenest-backend-g16m.onrender.com/wishlist/remove/${productId}/`);
+      await axios.delete("http://127.0.0.1:8000/api/cart/wishlist/");
       setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
       toast.success('Item removed from wishlist');
     } catch (error) {
@@ -59,8 +59,8 @@ const Wishlist = () => {
     try {
       const requests = wishlistItems.map((item) => 
         Promise.all([
-          axios.post('https://stylenest-backend-g16m.onrender.com/cart/add/', { product_id: item.product.id, quantity: 1 }),
-          axios.delete(`https://stylenest-backend-g16m.onrender.com/wishlist/remove/${item.product.id}/`)
+          axios.post('http://127.0.0.1:8000/api/cart/add/', { product_id: item.product.id, quantity: 1 }),
+          axios.delete(`http://127.0.0.1:8000/api/cart/${item.product.id}/remove/`)
         ])
       );
       await Promise.all(requests);

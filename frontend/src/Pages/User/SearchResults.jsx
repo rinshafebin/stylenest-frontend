@@ -17,7 +17,7 @@ const SearchResults = () => {
 
     try {
       const response = await axios.get(
-        `https://stylenest-backend-g16m.onrender.com/products/search/?search=${searchTerm}`
+        `http://127.0.0.1:8000/api/products/search/?search=${searchTerm}`
       );
       setResults(response.data || []);
     } catch (error) {

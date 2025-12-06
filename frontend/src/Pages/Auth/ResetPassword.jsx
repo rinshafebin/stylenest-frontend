@@ -28,7 +28,7 @@ const ResetPassword = () => {
       }
 
       try {
-        const res = await axios.post('/api/users/reset-password/', {
+        const res = await axios.post('http://127.0.0.1:8000/api/users/reset-password/', {
           email,
           password: form.password,
           confirm_password: form.confirmPassword,

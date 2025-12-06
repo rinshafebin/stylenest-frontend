@@ -15,7 +15,7 @@ export default function Customers() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get("/admin/users/"); // ✅ updated API path
+        const res = await axios.get(" http://127.0.0.1:8000/api/admin/users/"); 
         setCustomers(res.data);
       } catch (error) {
         console.error(error);
@@ -25,8 +25,7 @@ export default function Customers() {
       }
     };
     fetchCustomers();
-  }, []); // ✅ empty dependency array prevents re-renders
-
+  }, []); 
   // Only filter when searchTerm changes
   const filteredCustomers = React.useMemo(() => {
     return customers.filter(

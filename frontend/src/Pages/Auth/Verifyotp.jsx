@@ -27,7 +27,7 @@ const VerifyOtp = () => {
           return;
         }
 
-        const res = await axios.post('/auth/verify-otp/', { email, otp });
+        const res = await axios.post('http://127.0.0.1:8000/api/users/verify-otp/', { email, otp });
         setMessage(res.data.message || 'OTP verified successfully!');
         setTimeout(() => navigate('/resetpassword'), 1500);
       } catch (error) {

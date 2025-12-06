@@ -24,7 +24,7 @@ export default function EditProduct() {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`/admin/${id}/update/`); 
+        const res = await axios.get(`http://127.0.0.1:8000/admin/${id}/update/`); 
         setFormData({
           name: res.data.name || "",
           category: res.data.category || "",

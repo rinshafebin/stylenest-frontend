@@ -12,7 +12,7 @@ export default function CategoryProducts() {
     // Using useCallback to avoid recreating the function unnecessarily
     const fetchCategoryProducts = useCallback(async () => {
         try {
-            const response = await axios.get(`https://stylenest-backend-g16m.onrender.com/api/products/category/${category}`);
+            const response = await axios.get(`http://127.0.0.1:8000/api/products/category/${category}`);
             setProducts(response.data);
         } catch (error) {
             console.error("Failed to fetch products:", error);

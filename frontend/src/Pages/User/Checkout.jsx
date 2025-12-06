@@ -20,8 +20,8 @@ export default function CheckoutPage() {
     const fetchCheckoutData = async () => {
       try {
         const [shippingRes, summaryRes] = await Promise.all([
-          axios.get("https://stylenest-backend-g16m.onrender.com/api/orders/shipping/", { withCredentials: true }),
-          axios.get("https://stylenest-backend-g16m.onrender.com/api/orders/summary/", { withCredentials: true }),
+          axios.get("http://127.0.0.1:8000/api/orders/shipping-address/", { withCredentials: true }),
+          axios.get("http://127.0.0.1:8000/api/order/summary/", { withCredentials: true }),
         ]);
         setShippingInfo(shippingRes.data);
         setOrderSummary(summaryRes.data);
@@ -45,7 +45,7 @@ export default function CheckoutPage() {
     try {
       setLoading(true);
       await axios.post(
-        "https://stylenest-backend-g16m.onrender.com/api/payment/create/",
+        "http://127.0.0.1:8000/api/orders/create/",
         { payment_method: "cod", amount: totalPrice },
         { withCredentials: true }
       );
@@ -63,7 +63,7 @@ export default function CheckoutPage() {
     try {
       setLoading(true);
       const res = await axios.post(
-        "https://stylenest-backend-g16m.onrender.com/api/payment/create/",
+        "http://127.0.0.1:8000/api/orders/create/",
         { payment_method: "razorpay", amount: totalPrice },
         { withCredentials: true }
       );
@@ -85,7 +85,7 @@ export default function CheckoutPage() {
         handler: async (response) => {
           try {
             await axios.post(
-              "https://stylenest-backend-g16m.onrender.com/api/payment/verify/",
+              "http://127.0.0.1:8000/api/orders/verify-payment/",
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,

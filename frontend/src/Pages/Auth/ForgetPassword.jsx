@@ -16,7 +16,7 @@ const ForgetPassword = () => {
       setMessage('');
 
       try {
-        const res = await axios.post('api/users/forgot-password/', { email });
+        const res = await axios.post('http://127.0.0.1:8000/api/users/forgot-password/', { email });
         setMessage(res.data.message);
 
         localStorage.setItem('resetEmail', email);

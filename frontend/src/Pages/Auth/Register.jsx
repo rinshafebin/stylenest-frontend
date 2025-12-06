@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
       try {
         const res = await axios.post(
-          "https://stylenest-backend-g16m.onrender.com/api/users/register/",
+          "http://127.0.0.1:8000/api/users/register/",
           {
             username: formData.username,
             email: formData.email,

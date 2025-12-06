@@ -1,17 +1,15 @@
 import React, { useState, useCallback, useEffect } from "react";
 import Sidebar from "../../Components/Admin/Sidebar";
 import Header from "../../Components/Admin/Header";
-import axios from "axios";   // using default axios
+import axios from "axios";
 import { Upload, X } from "lucide-react";
 import toast from "react-hot-toast";
-
-// Set a base URL for axios
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AddProduct() {
+    const { token } = useAuth();
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
     const [imagePreview, setImagePreview] = useState(null);
 
     const [formData, setFormData] = useState({
@@ -30,7 +28,6 @@ export default function AddProduct() {
         "w-full rounded-lg px-4 py-2 border border-gray-300 bg-white " +
         "focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-200 placeholder-gray-500 transition duration-200";
 
-    // Handle input changes
     const handleChange = useCallback((e) => {
         const { name, value, files } = e.target;
         if (files) {
@@ -41,7 +38,6 @@ export default function AddProduct() {
         }
     }, []);
 
-    // Add detail
     const handleAddDetail = useCallback(() => {
         if (detailInput.trim() && !formData.details.includes(detailInput.trim())) {
             setFormData((prev) => ({
@@ -52,7 +48,6 @@ export default function AddProduct() {
         }
     }, [detailInput, formData.details]);
 
-    // Remove detail
     const handleRemoveItem = useCallback((item) => {
         setFormData((prev) => ({
             ...prev,
@@ -60,48 +55,59 @@ export default function AddProduct() {
         }));
     }, []);
 
-    // Submit form
-    const handleSubmit = useCallback(async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setMessage("");
+    const handleSubmit = useCallback(
+        async (e) => {
+            e.preventDefault();
+            setLoading(true);
 
-        const productData = new FormData();
-        Object.keys(formData).forEach((key) => {
-            if (Array.isArray(formData[key])) {
-                productData.append(key, JSON.stringify(formData[key]));
-            } else {
-                productData.append(key, formData[key]);
+            if (!token) {
+                toast.error("You must be logged in as admin!");
+                setLoading(false);
+                return;
             }
-        });
 
-        try {
-            await axios.post("/api/products/admin/create/", productData, {
-                headers: { "Content-Type": "multipart/form-data" },
+            const productData = new FormData();
+            Object.keys(formData).forEach((key) => {
+                if (Array.isArray(formData[key])) {
+                    productData.append(key, JSON.stringify(formData[key]));
+                } else {
+                    productData.append(key, formData[key]);
+                }
             });
 
-            toast.success("Product added successfully!");
+            try {
+                await axios.post(
+                    "http://127.0.0.1:8000/api/products/admin/create/",
+                    productData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
-            setFormData({
-                name: "",
-                description: "",
-                price: "",
-                category: "women",
-                stock: "",
-                details: [],
-                image: null,
-            });
+                toast.success("Product added successfully!");
+                setFormData({
+                    name: "",
+                    description: "",
+                    price: "",
+                    category: "women",
+                    stock: "",
+                    details: [],
+                    image: null,
+                });
+                setImagePreview(null);
+            } catch (err) {
+                console.error(err);
+                toast.error("Failed to add product. Make sure you are admin.");
+            } finally {
+                setLoading(false);
+            }
+        },
+        [formData, token]
+    );
 
-            setImagePreview(null);
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to add product.");
-        } finally {
-            setLoading(false);
-        }
-    }, [formData]);
-
-    // Cleanup image preview URL
     useEffect(() => {
         return () => {
             if (imagePreview) URL.revokeObjectURL(imagePreview);
@@ -118,20 +124,7 @@ export default function AddProduct() {
                         <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
                             <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
 
-                            {message && (
-                                <p
-                                    className={`mb-4 p-3 rounded-lg ${
-                                        message.includes("✅")
-                                            ? "bg-green-50 text-green-600"
-                                            : "bg-red-50 text-red-600"
-                                    }`}
-                                >
-                                    {message}
-                                </p>
-                            )}
-
                             <form className="space-y-6" onSubmit={handleSubmit}>
-                                {/* Product Info */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block font-medium mb-1">Product Name</label>
@@ -143,7 +136,6 @@ export default function AddProduct() {
                                             className={inputClass}
                                         />
                                     </div>
-
                                     <div>
                                         <label className="block font-medium mb-1">Price</label>
                                         <input
@@ -154,7 +146,6 @@ export default function AddProduct() {
                                             className={inputClass}
                                         />
                                     </div>
-
                                     <div>
                                         <label className="block font-medium mb-1">Stock</label>
                                         <input
@@ -165,7 +156,6 @@ export default function AddProduct() {
                                             className={inputClass}
                                         />
                                     </div>
-
                                     <div>
                                         <label className="block font-medium mb-1">Category</label>
                                         <select
@@ -181,7 +171,6 @@ export default function AddProduct() {
                                     </div>
                                 </div>
 
-                                {/* Description */}
                                 <div>
                                     <label className="block font-medium mb-1">Description</label>
                                     <textarea
@@ -193,7 +182,6 @@ export default function AddProduct() {
                                     />
                                 </div>
 
-                                {/* Details */}
                                 <div>
                                     <label className="block font-medium mb-2">Details</label>
                                     <div className="flex gap-2">
@@ -229,7 +217,6 @@ export default function AddProduct() {
                                     </div>
                                 </div>
 
-                                {/* Image Upload */}
                                 <div>
                                     <label className="block font-medium mb-2">Product Image</label>
                                     <div
@@ -259,7 +246,6 @@ export default function AddProduct() {
                                     />
                                 </div>
 
-                                {/* Submit */}
                                 <button
                                     type="submit"
                                     className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-3 rounded-lg w-full font-medium shadow-md hover:shadow-lg transform hover:scale-[1.02] transition disabled:opacity-60"

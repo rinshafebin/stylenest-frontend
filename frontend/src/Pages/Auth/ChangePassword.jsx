@@ -18,7 +18,7 @@ export default function ChangePasswordPage() {
         setError('');
 
         try {
-            const response = await axios.post('api/users/changepassword/', {
+            const response = await axios.post('http://127.0.0.1:8000/api//users/changepassword/', {
                 old_password: oldPassword,
                 new_password: newPassword,
             });
