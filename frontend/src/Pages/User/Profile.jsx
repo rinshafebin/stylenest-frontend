@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Mail, Phone, MapPin, Pencil } from 'lucide-react';
-import axiosInstance from '../../api/axios';
+import axios from 'axios';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -11,6 +11,7 @@ const Profile = () => {
     address: ''
   });
 
+  // Load user from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -24,20 +25,26 @@ const Profile = () => {
     }
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // Handle input changes
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  const handleUpdate = async () => {
+  // Update user profile
+  const handleUpdate = useCallback(async () => {
     try {
-      const res = await axiosInstance.patch('user/profile/', formData);
+      const res = await axios.patch(
+        'https://stylenest-backend-g16m.onrender.com/user/profile/',
+        formData
+      );
       setUser(res.data.data);
       localStorage.setItem('user', JSON.stringify(res.data.data));
       setIsEditing(false);
     } catch (error) {
       console.error('Update failed', error.response?.data || error.message);
     }
-  };
+  }, [formData]);
 
   if (!user) {
     return (
@@ -65,7 +72,7 @@ const Profile = () => {
           {/* Edit Button */}
           <button
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:scale-105 hover:shadow-md text-white text-sm rounded-lg transition-all duration-200"
-            onClick={() => setIsEditing(!isEditing)}
+            onClick={() => setIsEditing((prev) => !prev)}
           >
             <Pencil className="w-4 h-4" />
             {isEditing ? 'Cancel' : 'Edit Profile'}

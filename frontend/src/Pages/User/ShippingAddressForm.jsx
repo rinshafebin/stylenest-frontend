@@ -1,60 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { MapPin, Phone, User, Home, Globe } from "lucide-react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Navbar from "../../Components/Common/Navbar";
 import Footer from "../../Components/Common/Footer";
 
 export default function ShippingAddressForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    address: "",
+    address_line1: "",
+    address_line2: "",
     city: "",
     state: "",
-    pincode: "",
+    zip_code: "",
     country: "",
+    phone_number: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const fetchAddress = async () => {
-      try {
-        const res = await axiosInstance.get("/orders/shipping/");
-        setFormData(res.data);
-      } catch {
-        toast("No existing address found.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAddress();
+  // Fetch existing address
+  const fetchAddress = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        "https://stylenest-backend-g16m.onrender.com/orders/shipping/"
+      );
+      if (res.data) setFormData(res.data);
+    } catch {
+      toast("No existing address found.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    fetchAddress();
+  }, [fetchAddress]);
+
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
     setSaving(true);
     try {
-      await axiosInstance.post("/orders/shipping/", formData);
+      await axios.post(
+        "https://stylenest-backend-g16m.onrender.com/orders/shipping/",
+        formData
+      );
       toast.success("Shipping address saved successfully!");
       navigate("/checkout");
-
     } catch (err) {
       if (err.response?.data) setErrors(err.response.data);
+      toast.error("Failed to save address.");
     } finally {
       setSaving(false);
     }
   };
 
   if (loading)
-    return <p className="text-center mt-6 text-gray-500">Loading address...</p>;
+    return (
+      <p className="text-center mt-6 text-gray-500">Loading address...</p>
+    );
 
   return (
     <>
@@ -70,28 +82,79 @@ export default function ShippingAddressForm() {
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
-            <FormField icon={<User />} label="Full Name" name="name" value={formData.name} onChange={handleChange} error={errors.name} />
-            <FormField icon={<Phone />} label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} error={errors.phone} />
-            <FormField icon={<Home />} label="Address" name="address" value={formData.address} onChange={handleChange} error={errors.address} full />
-            <FormField icon={<MapPin />} label="City" name="city" value={formData.city} onChange={handleChange} error={errors.city} />
-            <FormField icon={<MapPin />} label="State" name="state" value={formData.state} onChange={handleChange} error={errors.state} />
-            <FormField icon={<MapPin />} label="Pincode" name="pincode" value={formData.pincode} onChange={handleChange} error={errors.pincode} />
-            <FormField icon={<Globe />} label="Country" name="country" value={formData.country} onChange={handleChange} error={errors.country} />
+            <FormField
+              icon={<User />}
+              label="Full Name / Address Line 1"
+              name="address_line1"
+              value={formData.address_line1}
+              onChange={handleChange}
+              error={errors.address_line1}
+              full
+            />
+            <FormField
+              icon={<Home />}
+              label="Address Line 2"
+              name="address_line2"
+              value={formData.address_line2}
+              onChange={handleChange}
+              error={errors.address_line2}
+              full
+            />
+            <FormField
+              icon={<MapPin />}
+              label="City"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              error={errors.city}
+            />
+            <FormField
+              icon={<MapPin />}
+              label="State"
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              error={errors.state}
+            />
+            <FormField
+              icon={<MapPin />}
+              label="Zip Code"
+              name="zip_code"
+              value={formData.zip_code}
+              onChange={handleChange}
+              error={errors.zip_code}
+            />
+            <FormField
+              icon={<Globe />}
+              label="Country"
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              error={errors.country}
+            />
+            <FormField
+              icon={<Phone />}
+              label="Phone Number"
+              name="phone_number"
+              value={formData.phone_number}
+              onChange={handleChange}
+              error={errors.phone_number}
+            />
 
             <div className="md:col-span-2 mt-4">
-              <Link to={"/checkout"}>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all flex justify-center items-center ${saving ? "opacity-70 cursor-not-allowed" : ""}`}
-                >
-                  {saving ? (
-                    <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-white"></span>
-                  ) : (
-                    "Place Order"
-                  )}
-                </button>
-              </Link>
+              <button
+                type="submit"
+                disabled={saving}
+                className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all flex justify-center items-center ${
+                  saving ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                {saving ? (
+                  <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-white"></span>
+                ) : (
+                  "Save Address"
+                )}
+              </button>
             </div>
           </form>
         </div>

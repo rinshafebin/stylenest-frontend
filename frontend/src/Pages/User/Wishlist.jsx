@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ChevronLeft, ShoppingBag } from 'lucide-react';
 import Navbar from '../../Components/Common/Navbar';
-import axiosInstance from '../../api/axios';
-import { useNavigate } from 'react-router-dom';
 import Footer from '../../Components/Common/Footer';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const Wishlist = () => {
@@ -11,57 +11,58 @@ const Wishlist = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const response = await axiosInstance.get('/wishlist/list/');
-        setWishlistItems(response.data);
-      } catch (error) {
-        console.error('Error fetching wishlist:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWishlist();
+  // Fetch wishlist
+  const fetchWishlist = useCallback(async () => {
+    try {
+      const response = await axios.get('https://stylenest-backend-g16m.onrender.com/wishlist/list/');
+      setWishlistItems(response.data || []);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      toast.error('Failed to load wishlist.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    fetchWishlist();
+  }, [fetchWishlist]);
+
+  const handleContinueShopping = () => {
     navigate('/products');
   };
 
-  const handleAddToCart = async (productId, itemId) => {
+  const handleAddToCart = useCallback(async (productId, itemId) => {
     try {
-      await axiosInstance.post('/cart/add/', { product_id: productId, quantity: 1 });
-      await axiosInstance.delete(`/wishlist/remove/${productId}/`);
+      await axios.post('https://stylenest-backend-g16m.onrender.com/cart/add/', { product_id: productId, quantity: 1 });
+      await axios.delete(`https://stylenest-backend-g16m.onrender.com/wishlist/remove/${productId}/`);
       setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
       toast.success('Item added to cart!');
     } catch (error) {
       toast.error('Error adding to cart');
       console.error(error);
     }
-  };
+  }, []);
 
-  const handleRemoveFromWishlist = async (itemId, product_id) => {
+  const handleRemoveFromWishlist = useCallback(async (itemId, productId) => {
     try {
-      await axiosInstance.delete(`/wishlist/remove/${product_id}/`);
+      await axios.delete(`https://stylenest-backend-g16m.onrender.com/wishlist/remove/${productId}/`);
       setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
       toast.success('Item removed from wishlist');
     } catch (error) {
       toast.error('Error removing from wishlist');
       console.error(error);
     }
-  };
+  }, []);
 
-  const handleMoveAllToCart = async () => {
+  const handleMoveAllToCart = useCallback(async () => {
     try {
-      const requests = wishlistItems.map((item) => {
-        return Promise.all([
-          axiosInstance.post('/cart/add/', { product_id: item.product.id, quantity: 1 }),
-          axiosInstance.delete(`/wishlist/remove/${item.product.id}/`)
-        ]);
-      });
-
+      const requests = wishlistItems.map((item) => 
+        Promise.all([
+          axios.post('https://stylenest-backend-g16m.onrender.com/cart/add/', { product_id: item.product.id, quantity: 1 }),
+          axios.delete(`https://stylenest-backend-g16m.onrender.com/wishlist/remove/${item.product.id}/`)
+        ])
+      );
       await Promise.all(requests);
       setWishlistItems([]);
       toast.success('All items moved to cart!');
@@ -69,16 +70,22 @@ const Wishlist = () => {
       toast.error('Error moving items');
       console.error(error);
     }
-  };
+  }, [wishlistItems]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading wishlist...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-16">
-        {loading ? (
-          <p className="text-center">Loading...</p>
-        ) : wishlistItems.length === 0 ? (
+        {wishlistItems.length === 0 ? (
           <div className="text-center py-24">
             <div className="text-6xl mb-6">🛍️</div>
             <h2 className="text-2xl font-semibold text-black mb-2">Your wishlist is empty</h2>
@@ -86,7 +93,7 @@ const Wishlist = () => {
               Save your favorite items to easily find them later
             </p>
             <button
-              onClick={handleSubmit}
+              onClick={handleContinueShopping}
               className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-3 rounded-lg hover:opacity-90"
             >
               Start Shopping
@@ -96,23 +103,17 @@ const Wishlist = () => {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {wishlistItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow group"
-                >
+                <div key={item.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
                   <div className="relative">
                     <img
-                      src={`${item.product.image}`}
+                      src={item.product.image}
                       alt={item.product.name}
                       className="w-full h-100 object-cover rounded-t-2xl"
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold text-black mb-1">
-                      {item.product.name}
-                    </h3>
+                    <h3 className="text-lg font-semibold text-black mb-1">{item.product.name}</h3>
                     <p className="text-gray-600 mb-3">${item.product.price}</p>
-
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleRemoveFromWishlist(item.id, item.product.id)}
@@ -120,7 +121,6 @@ const Wishlist = () => {
                       >
                         Remove
                       </button>
-
                       <button
                         onClick={() => handleAddToCart(item.product.id, item.id)}
                         className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:opacity-90 flex-1"
@@ -135,7 +135,7 @@ const Wishlist = () => {
 
             <div className="mt-12 flex justify-between items-center">
               <button
-                onClick={handleSubmit}
+                onClick={handleContinueShopping}
                 className="text-rose-600 hover:text-pink-600 flex items-center"
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />

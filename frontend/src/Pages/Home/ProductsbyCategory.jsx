@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import axiosInstance from "../../api/axios";
+import axios from "axios";
 import ProductGrid from "../../Components/Products/ProductGrid";
 import Navbar from "../../Components/Common/Navbar";
-import Footer from '../../Components/Common/Footer'
+import Footer from '../../Components/Common/Footer';
 
 export default function CategoryProducts() {
     const { category } = useParams();
-    const [product, setProducts] = useState([]);
+    const [products, setProducts] = useState([]);
 
-    useEffect(() => {
-        const fetchCategoryProducts = async () => {
-            try {
-                const response = await axiosInstance.get(`products/productbycategory/${category}`)
-                setProducts(response.data)
-            } catch (error) {
-                console.log('failed to fetch products:', error)
-            }
+    // Using useCallback to avoid recreating the function unnecessarily
+    const fetchCategoryProducts = useCallback(async () => {
+        try {
+            const response = await axios.get(`https://stylenest-backend-g16m.onrender.com/api/products/category/${category}`);
+            setProducts(response.data);
+        } catch (error) {
+            console.error("Failed to fetch products:", error);
         }
+    }, [category]);
+
+    // Fetch products whenever category changes
+    useEffect(() => {
         fetchCategoryProducts();
-    }, [category])
+    }, [fetchCategoryProducts]);
 
     return (
         <div>
@@ -28,9 +31,8 @@ export default function CategoryProducts() {
             <p className="text-center text-gray-600 text-sm mt-2 mb-6">
                 Explore the latest {category} fashion and find your perfect style.
             </p>
-            <ProductGrid products={product} />
+            <ProductGrid products={products} />
             <Footer />
         </div>
-    )
-
+    );
 }

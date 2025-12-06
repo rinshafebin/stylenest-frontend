@@ -11,6 +11,18 @@ import hero1 from '../../Assets/hero1.jpg';
 import hero2 from '../../Assets/hero2.jpg';
 import hero3 from '../../Assets/hero3.jpg';
 
+const categories = [
+  { img: women, title: 'Women', link: 'women' },
+  { img: men, title: 'Men', link: 'men' },
+  { img: kids, title: 'Kids', link: 'kids' },
+];
+
+const features = [
+  { icon: Truck, title: 'Free Shipping', desc: 'Free shipping on orders over $50', bg: 'bg-rose-100', color: 'text-rose-600' },
+  { icon: Shield, title: 'Secure Payment', desc: 'Your payment information is safe', bg: 'bg-blue-100', color: 'text-blue-500' },
+  { icon: RefreshCw, title: 'Easy Returns', desc: '30-day return policy', bg: 'bg-green-100', color: 'text-green-500' },
+  { icon: Headphones, title: '24/7 Support', desc: 'Always here to help you', bg: 'bg-purple-100', color: 'text-purple-500' },
+];
 
 export default function Homepage() {
   const images = [hero1, hero2, hero3];
@@ -18,12 +30,10 @@ export default function Homepage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1
-      );
+      setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -94,14 +104,10 @@ export default function Homepage() {
             <p className="text-gray-600">Find the perfect style</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { img: women, title: 'Women', link: 'women' },
-              { img: men, title: 'Men', link: 'men' },
-              { img: kids, title: 'Kids', link: 'kids' },
-            ].map((cat, idx) => (
+            {categories.map((cat) => (
               <Link
                 to={`/products/${cat.link}`}
-                key={idx}
+                key={cat.title}
                 className="relative group overflow-hidden rounded-3xl shadow-md hover:shadow-xl transition-shadow cursor-pointer block"
               >
                 <img
@@ -118,7 +124,6 @@ export default function Homepage() {
         </div>
       </section>
 
-
       {/* Why Choose Us */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -134,13 +139,8 @@ export default function Homepage() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Truck, title: 'Free Shipping', desc: 'Free shipping on orders over $50', bg: 'bg-rose-100', color: 'text-rose-600' },
-              { icon: Shield, title: 'Secure Payment', desc: 'Your payment information is safe', bg: 'bg-blue-100', color: 'text-blue-500' },
-              { icon: RefreshCw, title: 'Easy Returns', desc: '30-day return policy', bg: 'bg-green-100', color: 'text-green-500' },
-              { icon: Headphones, title: '24/7 Support', desc: 'Always here to help you', bg: 'bg-purple-100', color: 'text-purple-500' },
-            ].map((item, i) => (
-              <div className="text-center" key={i}>
+            {features.map((item) => (
+              <div className="text-center" key={item.title}>
                 <div className={`w-16 h-16 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-4`}>
                   <item.icon className={`w-8 h-8 ${item.color}`} />
                 </div>

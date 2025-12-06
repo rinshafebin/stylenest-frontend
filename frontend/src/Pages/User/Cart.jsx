@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import axios from 'axios';
 import Navbar from '../../Components/Common/Navbar';
 import Footer from '../../Components/Common/Footer';
 import { Trash2 } from 'lucide-react';
@@ -13,66 +14,96 @@ export default function Cart() {
     fetchCartItems();
   }, []);
 
+  // Fetch cart items
   const fetchCartItems = async () => {
     try {
-      const res = await axiosInstance.get('/cart/list/');
+      const res = await axios.get(
+        'https://stylenest-backend-g16m.onrender.com/api/cart/list/',
+        { withCredentials: true }
+      );
       setCartItems(res.data);
     } catch (error) {
       console.error('Error fetching cart:', error);
+      toast.error('Failed to load cart.');
     }
   };
 
+  // Change quantity locally and update backend
   const handleQuantityChange = async (id, action) => {
+    const itemIndex = cartItems.findIndex((i) => i.id === id);
+    if (itemIndex === -1) return;
+
+    const updatedItems = [...cartItems];
+    const item = updatedItems[itemIndex];
+    const newQty = action === 'increase' ? item.quantity + 1 : item.quantity - 1;
+
+    if (newQty <= 0) return handleRemove(id);
+
+    // Optimistically update state
+    updatedItems[itemIndex] = { ...item, quantity: newQty };
+    setCartItems(updatedItems);
+
     try {
-      const item = cartItems.find((i) => i.id === id);
-      const newQty =
-        action === 'increase' ? item.quantity + 1 : item.quantity - 1;
-
-      if (newQty <= 0) return handleRemove(id);
-
-      await axiosInstance.put(`cart/update/${id}/`, { quantity: newQty });
-      fetchCartItems();
+      await axios.patch(
+        `https://stylenest-backend-g16m.onrender.com/api/cart/${id}/update/`,
+        { quantity: newQty },
+        { withCredentials: true }
+      );
     } catch (error) {
-      console.error('Error updating quantity:', error);
+      toast.error('Failed to update quantity.');
+      // Revert state if API fails
+      updatedItems[itemIndex] = item;
+      setCartItems(updatedItems);
     }
   };
 
+  // Remove item locally and backend
   const handleRemove = async (id) => {
+    const updatedItems = cartItems.filter((i) => i.id !== id);
+    setCartItems(updatedItems);
+
     try {
-      await axiosInstance.delete(`cart/remove/${id}/`);
+      await axios.delete(
+        `https://stylenest-backend-g16m.onrender.com/api/cart/${id}/remove/`,
+        { withCredentials: true }
+      );
       toast.success('Product removed');
-      fetchCartItems();
     } catch (error) {
-      console.error('Error removing item:', error);
+      toast.error('Failed to remove item.');
+      fetchCartItems();
     }
   };
 
+  // Checkout
   const handleCheckout = async () => {
     try {
-      const res = await axiosInstance.get('/orders/shipping/');
-      if (res.data && res.data.address) {
-        navigate('/checkout');
-      } else {
-        navigate('/shippingaddress');
-      }
+      const res = await axios.get(
+        'https://stylenest-backend-g16m.onrender.com/api/orders/shipping-address/',
+        { withCredentials: true }
+      );
+      if (res.data && res.data.address) navigate('/checkout');
+      else navigate('/shippingaddress');
     } catch {
       navigate('/shippingaddress');
     }
   };
 
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.product.price * item.quantity,
-    0
-  );
+  // Compute total price and total items
+  const { totalPrice, totalItems } = useMemo(() => {
+    const price = cartItems.reduce(
+      (total, item) => total + item.product.price * item.quantity,
+      0
+    );
+    const items = cartItems.reduce((total, item) => total + item.quantity, 0);
+    return { totalPrice: price, totalItems: items };
+  }, [cartItems]);
 
   return (
     <>
       <Navbar />
       <section className="py-12 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-8">
-            Shopping Cart
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-8">Shopping Cart</h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
@@ -102,7 +133,7 @@ export default function Cart() {
                     {/* Image */}
                     <div className="md:w-40 w-full h-40 md:h-auto flex-shrink-0">
                       <img
-                        src={`${item.product.image}`}
+                        src={item.product.image}
                         alt={item.product.name}
                         className="w-full h-full object-cover"
                       />
@@ -126,9 +157,7 @@ export default function Cart() {
                       <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center border border-rose-300 rounded-lg overflow-hidden">
                           <button
-                            onClick={() =>
-                              handleQuantityChange(item.id, 'decrease')
-                            }
+                            onClick={() => handleQuantityChange(item.id, 'decrease')}
                             className="px-3 py-1 text-rose-500 font-bold hover:bg-rose-50"
                           >
                             −
@@ -137,9 +166,7 @@ export default function Cart() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() =>
-                              handleQuantityChange(item.id, 'increase')
-                            }
+                            onClick={() => handleQuantityChange(item.id, 'increase')}
                             className="px-3 py-1 text-rose-500 font-bold hover:bg-rose-50"
                           >
                             +
@@ -184,21 +211,14 @@ export default function Cart() {
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Total Items</span>
-                    <span>
-                      {cartItems.reduce(
-                        (total, item) => total + item.quantity,
-                        0
-                      )}
-                    </span>
+                    <span>{totalItems}</span>
                   </div>
                 </div>
 
                 <hr className="my-4 border-gray-200" />
 
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-800">
-                    Total
-                  </span>
+                  <span className="text-lg font-semibold text-gray-800">Total</span>
                   <span className="text-lg font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
                     ₹{totalPrice}
                   </span>
