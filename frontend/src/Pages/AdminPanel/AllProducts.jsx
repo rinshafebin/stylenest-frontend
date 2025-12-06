@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Edit, Trash2, PlusCircle, Search } from "lucide-react"; // ✅ Added Search here
-import axiosInstance from "../../api/axios";
 import Sidebar from "../../Components/Admin/Sidebar";
 import Header from "../../Components/Admin/Header";
 import { Link } from "react-router-dom";

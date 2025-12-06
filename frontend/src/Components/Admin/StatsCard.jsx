@@ -2,6 +2,14 @@ import React from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 const StatsCard = ({ title, value, change, trend, icon: Icon, gradient, period }) => {
+  const TrendIcon = React.useMemo(() => {
+    return trend === "up" ? (
+      <TrendingUp className="w-4 h-4 text-rose-500" />
+    ) : (
+      <TrendingDown className="w-4 h-4 text-red-500" />
+    );
+  }, [trend]);
+
   return (
     <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow hover:shadow-lg transition">
       <div className="flex items-center justify-between mb-4">
@@ -11,11 +19,7 @@ const StatsCard = ({ title, value, change, trend, icon: Icon, gradient, period }
           <Icon className="w-6 h-6" />
         </div>
         <div className="flex items-center space-x-1">
-          {trend === "up" ? (
-            <TrendingUp className="w-4 h-4 text-rose-500" />
-          ) : (
-            <TrendingDown className="w-4 h-4 text-red-500" />
-          )}
+          {TrendIcon}
           <span
             className={`text-sm font-medium ${
               trend === "up" ? "text-rose-600" : "text-red-600"
@@ -32,4 +36,4 @@ const StatsCard = ({ title, value, change, trend, icon: Icon, gradient, period }
   );
 };
 
-export default StatsCard;
+export default React.memo(StatsCard);

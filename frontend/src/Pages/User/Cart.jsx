@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../../Components/Common/Navbar';
 import Footer from '../../Components/Common/Footer';
 import { Trash2 } from 'lucide-react';
-import axiosInstance from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 

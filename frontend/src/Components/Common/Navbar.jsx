@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import axios from "axios";
 import {
   Search,
   User,
@@ -11,19 +12,20 @@ import {
   X,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axiosInstance from "../../api/axios";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Load user from localStorage
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
     const storedUser = localStorage.getItem("user");
+    const accessToken = localStorage.getItem("access_token");
 
     if (accessToken && storedUser) {
       setUser(JSON.parse(storedUser));
@@ -32,41 +34,62 @@ const Navbar = () => {
     }
   }, [location]);
 
-  const handleLogout = () => navigate("/logout");
-  const handleLogin = () => navigate("/login");
+  // Handlers
+  const handleLogout = useCallback(() => navigate("/logout"), [navigate]);
+  const handleLogin = useCallback(() => navigate("/login"), [navigate]);
+  const handleNavigate = useCallback(
+    (path) => {
+      navigate(path);
+      setIsMobileMenuOpen(false);
+    },
+    [navigate]
+  );
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      if (searchTerm.trim() === "") {
-        setSearchResults([]);
-        return;
+  // Debounced search
+  const fetchSearchResults = useCallback(async () => {
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+    try {
+      const response = await axios.get(`/search/?query=${searchTerm}`);
+      if (Array.isArray(response.data)) {
+        setSearchResults(response.data);
+      } else {
+        setSearchResults(response.data.results || []);
       }
-      try {
-        const response = await axiosInstance.get(
-          `/products/search/?query=${searchTerm}`
-        );
-        if (Array.isArray(response.data)) {
-          setSearchResults(response.data);
-        } else {
-          setSearchResults(response.data.results || []);
-        }
-      } catch (error) {
-        console.log("Search error", error);
-      }
-    };
-
-    const delayDebounce = setTimeout(fetchResults, 300);
-    return () => clearTimeout(delayDebounce);
+    } catch (err) {
+      console.error("Search error:", err);
+    }
   }, [searchTerm]);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?query=${searchTerm}`);
-      setSearchResults([]);
-      setIsMobileMenuOpen(false);
-    }
-  };
+  useEffect(() => {
+    const delay = setTimeout(fetchSearchResults, 300);
+    return () => clearTimeout(delay);
+  }, [fetchSearchResults]);
+
+  const handleSearchSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (searchTerm.trim()) {
+        navigate(`/search?query=${searchTerm}`);
+        setSearchResults([]);
+        setIsMobileMenuOpen(false);
+      }
+    },
+    [navigate, searchTerm]
+  );
+
+  // Memoized nav links
+  const navLinks = useMemo(
+    () => [
+      { label: "All Products", path: "/products" },
+      { label: "Women", path: "/products/women" },
+      { label: "Men", path: "/products/men" },
+      { label: "Kids", path: "/products/kids" },
+    ],
+    []
+  );
 
   return (
     <header className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
@@ -81,18 +104,15 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center space-x-8">
-          <Link to="/products" className="text-black hover:text-rose-600 transition-colors font-medium">
-            All Products
-          </Link>
-          <Link to="/products/women" className="text-black hover:text-rose-600 transition-colors font-medium">
-            Women
-          </Link>
-          <Link to="/products/men" className="text-black hover:text-rose-600 transition-colors font-medium">
-            Men
-          </Link>
-          <Link to="/products/kids" className="text-black hover:text-rose-600 transition-colors font-medium">
-            Kids
-          </Link>
+          {navLinks.map((link) => (
+            <button
+              key={link.path}
+              onClick={() => handleNavigate(link.path)}
+              className="text-black hover:text-rose-600 transition-colors font-medium"
+            >
+              {link.label}
+            </button>
+          ))}
         </nav>
 
         {/* Right side (Desktop) */}
@@ -120,11 +140,7 @@ const Navbar = () => {
                   <li
                     key={product.id}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                    onClick={() => {
-                      navigate(`/product/${product.id}`);
-                      setSearchTerm("");
-                      setSearchResults([]);
-                    }}
+                    onClick={() => handleNavigate(`/product/${product.id}`)}
                   >
                     {product.name}
                   </li>
@@ -134,19 +150,17 @@ const Navbar = () => {
           </div>
 
           {/* Wishlist */}
-          <Link to="/wishlist">
+          <button onClick={() => handleNavigate("/wishlist")}>
             <Heart className="w-5 h-5 text-black hover:text-rose-700" />
-          </Link>
+          </button>
 
           {/* Cart */}
-          <Link to="/cart">
-            <div className="relative">
-              <ShoppingBag className="w-5 h-5 text-black hover:text-rose-700" />
-              <span className="absolute -top-2 -right-2 bg-rose-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </div>
-          </Link>
+          <button onClick={() => handleNavigate("/cart")} className="relative">
+            <ShoppingBag className="w-5 h-5 text-black hover:text-rose-700" />
+            <span className="absolute -top-2 -right-2 bg-rose-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              0
+            </span>
+          </button>
 
           {/* User Menu */}
           {user ? (
@@ -158,18 +172,27 @@ const Navbar = () => {
                 </span>
               </div>
               <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
-                <Link to="/profile" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">
+                <button
+                  onClick={() => handleNavigate("/profile")}
+                  className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full"
+                >
                   <User className="w-4 h-4 mr-2" /> My Profile
-                </Link>
-                <Link to="/orders" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">
+                </button>
+                <button
+                  onClick={() => handleNavigate("/orders")}
+                  className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full"
+                >
                   <ClipboardList className="w-4 h-4 mr-2" /> Orders
-                </Link>
-                <Link to="/changepassword" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">
+                </button>
+                <button
+                  onClick={() => handleNavigate("/changepassword")}
+                  className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full"
+                >
                   <Key className="w-4 h-4 mr-2" /> Change Password
-                </Link>
+                </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full"
                 >
                   <LogOut className="w-4 h-4 mr-2" /> Logout
                 </button>
@@ -198,7 +221,10 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="lg:hidden bg-white border-t border-gray-200 shadow-md">
           <div className="p-4 flex flex-col space-y-3">
-            <form onSubmit={handleSearchSubmit} className="flex items-center border border-gray-300 rounded px-3 py-1">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="flex items-center border border-gray-300 rounded px-3 py-1"
+            >
               <input
                 type="text"
                 placeholder="Search..."
@@ -211,25 +237,30 @@ const Navbar = () => {
               </button>
             </form>
 
-            <Link to="/products" onClick={() => setIsMobileMenuOpen(false)}>All Products</Link>
-            <Link to="/products/women" onClick={() => setIsMobileMenuOpen(false)}>Women</Link>
-            <Link to="/products/men" onClick={() => setIsMobileMenuOpen(false)}>Men</Link>
-            <Link to="/products/kids" onClick={() => setIsMobileMenuOpen(false)}>Kids</Link>
+            {navLinks.map((link) => (
+              <button
+                key={link.path}
+                onClick={() => handleNavigate(link.path)}
+                className="text-left text-black"
+              >
+                {link.label}
+              </button>
+            ))}
 
             <div className="flex space-x-4 mt-2">
-              <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)}>
+              <button onClick={() => handleNavigate("/wishlist")}>
                 <Heart className="w-5 h-5" />
-              </Link>
-              <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)}>
+              </button>
+              <button onClick={() => handleNavigate("/cart")}>
                 <ShoppingBag className="w-5 h-5" />
-              </Link>
+              </button>
             </div>
 
             {user ? (
               <>
-                <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>My Profile</Link>
-                <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)}>Orders</Link>
-                <Link to="/changepassword" onClick={() => setIsMobileMenuOpen(false)}>Change Password</Link>
+                <button onClick={() => handleNavigate("/profile")}>My Profile</button>
+                <button onClick={() => handleNavigate("/orders")}>Orders</button>
+                <button onClick={() => handleNavigate("/changepassword")}>Change Password</button>
                 <button
                   onClick={() => {
                     handleLogout();
@@ -241,7 +272,9 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <button onClick={handleLogin} className="text-left">Login</button>
+              <button onClick={handleLogin} className="text-left">
+                Login
+              </button>
             )}
           </div>
         </div>
@@ -250,4 +283,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

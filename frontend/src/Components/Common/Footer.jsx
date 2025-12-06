@@ -1,6 +1,6 @@
-import React from 'react';
-import { Facebook, Twitter, Instagram, Mail } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -41,4 +41,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default React.memo(Footer);

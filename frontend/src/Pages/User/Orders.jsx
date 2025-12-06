@@ -9,7 +9,6 @@ import {
   ShoppingBag,
 } from 'lucide-react';
 import {Link} from 'react-router-dom'
-import axiosInstance from '../../api/axios';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);

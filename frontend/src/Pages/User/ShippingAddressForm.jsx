@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../../api/axios";
 import { MapPin, Phone, User, Home, Globe } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";

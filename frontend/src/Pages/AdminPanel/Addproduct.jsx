@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../Components/Admin/Sidebar";
 import Header from "../../Components/Admin/Header";
-import axiosInstance from "../../api/axios";
+import axios from "axios";   // <-- using normal axios
 import { Upload, X } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -62,18 +62,25 @@ export default function AddProduct() {
         const productData = new FormData();
         Object.keys(formData).forEach((key) => {
             if (Array.isArray(formData[key])) {
-                productData.append(key, formData[key].join(", "));
+                productData.append(key, JSON.stringify(formData[key])); // <-- send array properly
             } else {
                 productData.append(key, formData[key]);
             }
         });
 
-
         try {
-            await axiosInstance.post("/adminside/createproducts/", productData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            await axios.post(
+                "http://127.0.0.1:8000/api/products/admin/create/",
+                productData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
             toast.success("Product added successfully!");
+
             setFormData({
                 name: "",
                 description: "",
@@ -83,7 +90,9 @@ export default function AddProduct() {
                 details: [],
                 image: null,
             });
+
             setImagePreview(null);
+
         } catch (err) {
             console.error(err);
             toast.error("Failed to add product.");

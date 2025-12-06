@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useParams, Link } from "react-router-dom";
-import axiosInstance from "../../api/axios";
 import Navbar from "../../Components/Common/Navbar";
 import Footer from "../../Components/Common/Footer";
 import toast from "react-hot-toast";

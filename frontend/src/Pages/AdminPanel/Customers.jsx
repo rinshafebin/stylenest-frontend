@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Header from "../../Components/Admin/Header";
 import Sidebar from "../../Components/Admin/Sidebar";
 import { Search } from "lucide-react";
-import axiosInstance from "../../api/axios";
 import toast from "react-hot-toast";
 
 export default function Customers() {

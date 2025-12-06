@@ -1,22 +1,27 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Home, Package, ShoppingBag, Users, CreditCard, Truck,
-  Star, DollarSign, Settings
+  Home, Package, ShoppingBag, Users
 } from "lucide-react";
 
 const Sidebar = ({ sidebarOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const sidebarItems = [
+  const sidebarItems = React.useMemo(() => [
     { icon: Home, label: 'Dashboard', path: '/adminpanel' },
     { icon: Package, label: 'AddProducts', path: '/addproduct', count: '2.4k' },
     { icon: Package, label: 'Products', path: '/allproducts', count: '2.4k' },
     { icon: ShoppingBag, label: 'Orders', badge: '12', path: '/allorders' },
     { icon: Users, label: 'Customers', count: '892', path: '/allcustomers' },
+  ], []);
 
-  ];
+  const handleNavigate = React.useCallback(
+    (path) => {
+      navigate(path);
+    },
+    [navigate]
+  );
 
   return (
     <div className={`${sidebarOpen ? 'w-72' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}>
@@ -40,7 +45,7 @@ const Sidebar = ({ sidebarOpen }) => {
           return (
             <div
               key={idx}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNavigate(item.path)}
               className={`group flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 ${
                 isActive
                   ? 'bg-gradient-to-r from-rose-50 to-pink-50 text-rose-600 shadow'
@@ -74,4 +79,4 @@ const Sidebar = ({ sidebarOpen }) => {
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

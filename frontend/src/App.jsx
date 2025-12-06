@@ -51,24 +51,24 @@ const App = () => {
         <div className="flex-grow">
           <Routes>
             <Route path='/register' element={< Register />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/' element={<Homepage />} />
+            {/* <Route path='/login' element={<Login />} /> */}
+            {/* <Route path='/' element={<Homepage />} />
 
             <Route path='/products' element={<Allproducts />} />
             <Route path='/products/:category' element={<ProductbyCategory />} />
-            <Route path='/productdetails/:id' element={<ProductDetails />} />
+            <Route path='/productdetails/:id' element={<ProductDetails />} /> */}
 
-            <Route path='/cart' element={<Cart />} />
+            {/* <Route path='/cart' element={<Cart />} />
             <Route path='/wishlist' element={<Wishlist />} />
             <Route path='/profile' element={<Profile />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path='/orders' element={<Orders />} />
             <Route path='/shippingaddress' element={< ShippingAddressForm/>} />
-            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout" element={<Checkout />} /> */}
             
 
 
-            <Route path='/changepassword' element={< ChangePassword />} />
+            {/* <Route path='/changepassword' element={< ChangePassword />} />
             <Route path='/forgetpassword' element={< ForgetPassword />} />
             <Route path='/verifyotp' element={<Verifyotp />} />
             <Route path='/resetpassword' element={<ResetPassword />} />
@@ -78,12 +78,12 @@ const App = () => {
 
 
             {/* admin side  */}
-            <Route path='/adminpanel' element={<AdminDashboard />} />
+            {/* <Route path='/adminpanel' element={<AdminDashboard />} />
             <Route path='/addproduct' element={< AddProduct />} />
             <Route path='/allproducts' element={< AllProducts />} />
             <Route path='/allcustomers' element={< Customers />} />
             <Route path='/allorders' element={< AllOrders />} />
-            <Route path='/editproduct/:id/' element={< EditProduct />} />
+            <Route path='/editproduct/:id/' element={< EditProduct />} /> */}
 
           </Routes>
         </div>

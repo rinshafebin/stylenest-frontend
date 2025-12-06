@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CreditCard, Wallet, ArrowLeft, MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axios";
 import Navbar from '../../Components/Common/Navbar'
 import Footer from '../../Components/Common/Footer'
 

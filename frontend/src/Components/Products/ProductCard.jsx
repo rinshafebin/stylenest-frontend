@@ -1,41 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Heart, ShoppingBag, Star } from 'lucide-react';
-import axiosInstance from '../../api/axios';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
-export default function ProductCard({ product, initialWishlisted = false }) {
+const ProductCard = React.memo(({ product, initialWishlisted = false }) => {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
-   
-  const handleAddToCart = async () => {
+
+  // Add to cart
+  const handleAddToCart = useCallback(async () => {
     try {
-      await axiosInstance.post('/cart/add/', { product_id: product.id, quantity: 1 });
+      await axios.post('/api/cart/add/', { product_id: product.id, quantity: 1 });
       toast.success('Product added to cart');
     } catch (error) {
-      toast.error("You need to be logged in to add to cart.");
+      toast.error('You need to be logged in to add to cart.');
     }
-  };
+  }, [product.id]);
 
-  const handleAddToWishlist = async () => {
+  // Add to wishlist
+  const handleAddToWishlist = useCallback(async () => {
     try {
-      await axiosInstance.post('/wishlist/create/', { product_id: product.id });
+      await axios.post('/api/cart/wishlist/', { product_id: product.id });
       setIsWishlisted(true);
       toast.success('Product added to wishlist!');
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        toast.error("You need to be logged in to use wishlist.");
+      if (error.response?.status === 401) {
+        toast.error('You need to be logged in to use wishlist.');
       } else {
-        toast.error("Something went wrong adding to wishlist.");
+        toast.error('Something went wrong adding to wishlist.');
       }
     }
-  };
+  }, [product.id]);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition duration-300 flex flex-col">
       <div className="relative">
         <Link to={`/productdetails/${product.id}`}>
           <img
-            src={`${product.image}`}
+            src={product.image}
             alt={product.name}
             className="w-full h-100 object-cover rounded-xl"
           />
@@ -78,4 +80,6 @@ export default function ProductCard({ product, initialWishlisted = false }) {
       </div>
     </div>
   );
-}
+});
+
+export default ProductCard;

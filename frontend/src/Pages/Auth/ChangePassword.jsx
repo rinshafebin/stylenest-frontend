@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
-import axiosInstance from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function ChangePasswordPage() {

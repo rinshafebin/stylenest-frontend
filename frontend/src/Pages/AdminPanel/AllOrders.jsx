@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import Header from "../../Components/Admin/Header";
 import Sidebar from "../../Components/Admin/Sidebar";
 import { Search } from "lucide-react";
-import axiosInstance from "../../api/axios";
 
 export default function AllOrders() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

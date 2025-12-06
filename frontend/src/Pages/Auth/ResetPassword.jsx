@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Lock, CheckCircle2 } from 'lucide-react';
-import axiosInstance from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {

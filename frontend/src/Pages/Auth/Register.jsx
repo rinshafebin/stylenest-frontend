@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from 'lucide-react';
-import axiosInstance from '../../api/axios';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -18,45 +19,51 @@ export default function RegisterPage() {
 
   const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // Memoized input handler
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setError('');
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.post('auth/register/', {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      // ✅ Accept any success response (200, 201, 204)
-      if (response.status >= 200 && response.status < 300) {
-        toast.success('Account created successfully!');
-        setFormData({ username: '', email: '', password: '', confirmPassword: '' });
-        setError('');
-        navigate('/login');
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        return;
       }
-    } catch (err) {
-      if (err.response?.data) {
-        const data = err.response.data;
-        const firstKey = Object.keys(data)[0];
-        setError(Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]);
-      } else {
-        setError('Registration failed.');
+
+      try {
+        const res = await axios.post(
+          "https://stylenest-backend-g16m.onrender.com/api/users/register/",
+          {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          }
+        );
+
+        if (res.status >= 200 && res.status < 300) {
+          toast.success('Account created successfully!');
+          navigate('/login');
+        }
+      } catch (err) {
+        if (err.response?.data) {
+          const data = err.response.data;
+          const firstKey = Object.keys(data)[0];
+          setError(Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]);
+        } else {
+          setError('Registration failed');
+        }
       }
-    }
-  };
+    },
+    [formData, navigate]
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-100 flex items-center justify-center p-4">
@@ -99,7 +106,7 @@ export default function RegisterPage() {
         <div className="relative">
           <Lock className="absolute left-3 top-3.5 text-gray-400" />
           <input
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             name="password"
             value={formData.password}
             onChange={handleChange}
@@ -109,7 +116,7 @@ export default function RegisterPage() {
           />
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={() => setShowPassword((prev) => !prev)}
             className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -120,7 +127,7 @@ export default function RegisterPage() {
         <div className="relative">
           <Lock className="absolute left-3 top-3.5 text-gray-400" />
           <input
-            type={showConfirmPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
@@ -130,17 +137,15 @@ export default function RegisterPage() {
           />
           <button
             type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            onClick={() => setShowConfirmPassword((prev) => !prev)}
             className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
           >
             {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
 
-        {/* Error Message */}
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-2 rounded-md hover:from-pink-600 hover:to-pink-700 transition duration-300"
@@ -149,10 +154,10 @@ export default function RegisterPage() {
         </button>
 
         <p className="text-sm text-center text-gray-600">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <button
             type="button"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate("/login")}
             className="font-semibold text-rose-600 hover:text-rose-500 transition-colors"
           >
             Log in here
