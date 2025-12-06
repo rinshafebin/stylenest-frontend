@@ -5,11 +5,15 @@ import { useParams } from "react-router-dom";
 import Navbar from "../../Components/Common/Navbar";
 import Footer from "../../Components/Common/Footer";
 import toast from "react-hot-toast";
+import { useAuth } from '../../context/AuthContext';
+
 
 export default function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const { token } = useAuth();
+
 
   // Use environment variable for backend URL
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
@@ -19,7 +23,7 @@ export default function ProductDetails() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `${BACKEND_URL}/api/products/${id}/`
+          `http://127.0.0.1:8000/api/products/${id}/`
         );
         setProduct(response.data);
       } catch (error) {
@@ -30,39 +34,48 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id, BACKEND_URL]);
 
-  // Add product to cart
+  // Add to Cart
   const handleAddToCart = async () => {
     if (!product) return;
+
+    if (!token) {
+      toast.error('You need to be logged in to add to cart.');
+      return;
+    }
+
     try {
       await axios.post(
         `${BACKEND_URL}/api/cart/add/`,
-        {
-          product_id: product.id,
-          quantity: 1,
-          size: selectedSize || null,
-        },
-        { withCredentials: true }
+        { product_id: product.id, quantity: 1, size: selectedSize || null },
+        { headers: { Authorization: `Bearer ${token}` } } // <-- Pass token here
       );
       toast.success("Product added to cart");
     } catch (error) {
-      toast.error("You need to be logged in to add to cart.");
+      toast.error("Something went wrong adding to cart.");
     }
   };
 
-  // Add product to wishlist
+  // Add to Wishlist
   const handleAddToWishlist = async () => {
     if (!product) return;
+
+    if (!token) {
+      toast.error('You need to be logged in to use wishlist.');
+      return;
+    }
+
     try {
       await axios.post(
-        `${BACKEND_URL}/api/cart/wishlist/`,
+        `http://127.0.0.1:8000/api/cart/wishlist/`, 
         { product_id: product.id },
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${token}` } } 
       );
       toast.success("Product added to wishlist!");
     } catch (error) {
-      toast.error("You need to be logged in to use wishlist.");
+      toast.error("Something went wrong adding to wishlist.");
     }
   };
+
 
   if (!product) {
     return (
@@ -119,11 +132,10 @@ export default function ProductDetails() {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`border px-4 py-2 rounded-lg transition ${
-                      selectedSize === size
+                    className={`border px-4 py-2 rounded-lg transition ${selectedSize === size
                         ? "border-rose-500 bg-rose-100"
                         : "border-gray-300 hover:border-rose-500"
-                    }`}
+                      }`}
                   >
                     {size}
                   </button>

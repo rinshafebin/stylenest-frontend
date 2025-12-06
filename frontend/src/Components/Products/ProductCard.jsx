@@ -9,8 +9,6 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth(); // get token from AuthContext
 
-  console.log('Token in localStorage:', localStorage.getItem("access_token"));
-
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
 

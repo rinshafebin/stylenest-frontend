@@ -4,7 +4,7 @@ import Register from './Pages/Auth/Register'
 import Homepage from './Pages/Home/HomePage'
 import Logout from './Pages/Auth/Logout'
 import ChangePassword from './Pages/Auth/ChangePassword'
-import Cart from './Pages/User/Cart'
+import CartPage from './Pages/User/cart/CartPage'
 import Wishlist from './Pages/User/Wishlist'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomeAllProducts from './Pages/Home/HomeAllProducts'
@@ -25,7 +25,7 @@ import AllProducts from './Pages/AdminPanel/AllProducts'
 import EditProduct from './Pages/AdminPanel/EditProduct'
 import ResetPassword from './Pages/Auth/ResetPassword'
 import SearchResults from './Pages/User/SearchResults'
-import ShippingAddressForm from './Pages/User/ShippingAddressForm'
+import ShippingAddressForm from './Pages/User/shipping/ShippingAddressForm'
 
 function App() {
   return (
@@ -43,7 +43,7 @@ function App() {
             <Route path='/products/:category' element={<ProductbyCategory />} />
             <Route path='/productdetails/:id' element={<ProductDetails />} />
 
-            <Route path='/cart' element={<Cart />} />
+            <Route path='/cart' element={<CartPage />} />
             <Route path='/wishlist' element={<Wishlist />} />
             <Route path='/profile' element={<Profile />} />
             <Route path="/search" element={<SearchResults />} />
