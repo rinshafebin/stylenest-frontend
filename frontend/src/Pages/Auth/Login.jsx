@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,40 +14,48 @@ export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setError('');
+      setLoading(true);
 
-    try {
-      const response = await axiosInstance.post('auth/login/', { email, password });
-      const { access, refresh, user } = response.data;
-      login(access, refresh, user);
+      try {
+        const response = await axios.post('api/users/login/', { email, password });
+        const { access, refresh, user } = response.data;
+        login(access, refresh, user);
 
-      toast.success("Login successfully");
-      if (user.is_superuser) {
-        navigate("/adminpanel");
-      } else {
-        navigate("/");
-      }
+        toast.success("Login successfully");
 
-    } catch (err) {
-      console.error(err);
-      if (err.response?.data) {
-        const data = err.response.data;
-        if (typeof data.detail === "string") {
-          setError(data.detail);
+        if (user.is_superuser) {
+          navigate("/adminpanel");
         } else {
-          const firstKey = Object.keys(data)[0];
-          setError(Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]);
+          navigate("/");
         }
-      } else {
-        setError("Something went wrong. Please try again.");
+
+      } catch (err) {
+        console.error(err);
+        if (err.response?.data) {
+          const data = err.response.data;
+          if (typeof data.detail === "string") {
+            setError(data.detail);
+          } else {
+            const firstKey = Object.keys(data)[0];
+            setError(Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]);
+          }
+        } else {
+          setError("Something went wrong. Please try again.");
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [email, password, login, navigate]
+  );
+
+  const togglePassword = useCallback(() => {
+    setShowPassword(prev => !prev);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-100 flex items-center justify-center p-4">
@@ -63,6 +72,7 @@ export const Login = () => {
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Email */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 block">Email Address</label>
               <div className="relative">
@@ -79,6 +89,7 @@ export const Login = () => {
               </div>
             </div>
 
+            {/* Password */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 block">Password</label>
               <div className="relative">
@@ -94,7 +105,7 @@ export const Login = () => {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={togglePassword}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -115,23 +126,18 @@ export const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 px-6 rounded-xl font-semibold focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl group ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:from-rose-600 hover:to-pink-600'
-                }`}
+              className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 px-6 rounded-xl font-semibold focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl group ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:from-rose-600 hover:to-pink-600'}`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <span>{loading ? 'Signing in...' : 'Sign In'}</span>
                 {!loading && (
-                  <span>
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 )}
               </div>
             </button>
 
             {error && (
-              <p className="text-sm text-red-500 text-center mt-2">
-                {error}
-              </p>
+              <p className="text-sm text-red-500 text-center mt-2">{error}</p>
             )}
           </form>
 

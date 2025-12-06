@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import axios from 'axios'; // normal axios
 import { KeyRound, CheckCircle2 } from 'lucide-react';
-import axiosInstance from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 
 const VerifyOtp = () => {
@@ -9,22 +9,36 @@ const VerifyOtp = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage('');
+  const handleChange = useCallback((e) => {
+    setOtp(e.target.value);
+  }, []);
 
-    try {
-      const email = localStorage.getItem('resetEmail'); 
-      const res = await axiosInstance.post('auth/verify-otp/', { email, otp });
-      setMessage(res.data.message);
-      setTimeout(() => navigate('/resetpassword'), 1500);
-    } catch (error) {
-      setMessage(error.response?.data?.error || 'Invalid OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleVerifyOtp = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setMessage('');
+
+      try {
+        const email = localStorage.getItem('resetEmail');
+        if (!email) {
+          setMessage('Email not found. Please restart the process.');
+          setLoading(false);
+          return;
+        }
+
+        const res = await axios.post('/auth/verify-otp/', { email, otp });
+        setMessage(res.data.message || 'OTP verified successfully!');
+        setTimeout(() => navigate('/resetpassword'), 1500);
+      } catch (error) {
+        setMessage(error.response?.data?.error || 'Invalid OTP');
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [otp, navigate]
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -41,15 +55,14 @@ const VerifyOtp = () => {
             <input
               type="text"
               value={otp}
-              onChange={(e) => setOtp(e.target.value)}
+              onChange={handleChange}
               placeholder="Enter OTP"
-              maxLength="6"
+              maxLength={6}
               required
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
             />
           </div>
 
-          {/* Updated button theme to match RegisterPage */}
           <button
             type="submit"
             disabled={loading}

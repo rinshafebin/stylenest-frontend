@@ -1,6 +1,6 @@
 // src/pages/admin/DashboardHome.jsx
-import React, { useState } from "react";
-import Header from "../../Components/Admin/Header"
+import React, { useState, useMemo } from "react";
+import Header from "../../Components/Admin/Header";
 import Sidebar from "../../Components/Admin/Sidebar";
 import StatsCard from "../../Components/Admin/StatsCard";
 import { ShoppingBag, Users, DollarSign, Star } from "lucide-react";
@@ -8,44 +8,48 @@ import { ShoppingBag, Users, DollarSign, Star } from "lucide-react";
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const stats = [
-    {
-      title: "Total Sales",
-      value: "₹1,24,500",
-      change: "+12%",
-      trend: "up",
-      icon: DollarSign,
-      gradient: "from-green-400 to-green-600",
-      period: "Last 30 days",
-    },
-    {
-      title: "Total Orders",
-      value: "1,452",
-      change: "-5%",
-      trend: "down",
-      icon: ShoppingBag,
-      gradient: "from-blue-400 to-blue-600",
-      period: "Last 30 days",
-    },
-    {
-      title: "New Customers",
-      value: "892",
-      change: "+8%",
-      trend: "up",
-      icon: Users,
-      gradient: "from-rose-400 to-pink-500",
-      period: "Last 30 days",
-    },
-    {
-      title: "Reviews",
-      value: "320",
-      change: "+15%",
-      trend: "up",
-      icon: Star,
-      gradient: "from-yellow-400 to-yellow-500",
-      period: "Last 30 days",
-    },
-  ];
+  // Memoize stats to avoid recreating array on each render
+  const stats = useMemo(
+    () => [
+      {
+        title: "Total Sales",
+        value: "₹1,24,500",
+        change: "+12%",
+        trend: "up",
+        icon: DollarSign,
+        gradient: "from-green-400 to-green-600",
+        period: "Last 30 days",
+      },
+      {
+        title: "Total Orders",
+        value: "1,452",
+        change: "-5%",
+        trend: "down",
+        icon: ShoppingBag,
+        gradient: "from-blue-400 to-blue-600",
+        period: "Last 30 days",
+      },
+      {
+        title: "New Customers",
+        value: "892",
+        change: "+8%",
+        trend: "up",
+        icon: Users,
+        gradient: "from-rose-400 to-pink-500",
+        period: "Last 30 days",
+      },
+      {
+        title: "Reviews",
+        value: "320",
+        change: "+15%",
+        trend: "up",
+        icon: Star,
+        gradient: "from-yellow-400 to-yellow-500",
+        period: "Last 30 days",
+      },
+    ],
+    []
+  );
 
   return (
     <div className="flex h-screen bg-gray-50">

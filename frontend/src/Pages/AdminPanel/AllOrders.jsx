@@ -1,8 +1,49 @@
 // src/pages/admin/Orders.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import axios from "axios";
 import Header from "../../Components/Admin/Header";
 import Sidebar from "../../Components/Admin/Sidebar";
 import { Search } from "lucide-react";
+
+// Memoized row component
+const OrderRow = React.memo(({ order, onEdit, formatCurrency, badgeClass }) => (
+  <tr className="hover:bg-gray-50 even:bg-gray-50/50">
+    <td className="px-6 py-4 font-medium text-black">{order.id}</td>
+    <td className="px-6 py-4">{order.user || "—"}</td>
+    <td className="px-6 py-4">
+      {new Date(order.created_at).toLocaleDateString()}
+    </td>
+    <td className="px-6 py-4">{formatCurrency(order.total)}</td>
+    <td className="px-6 py-4">
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-medium ${badgeClass(
+          order.payment_status,
+          "payment"
+        )}`}
+      >
+        {order.payment_status}
+      </span>
+    </td>
+    <td className="px-6 py-4">
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-medium ${badgeClass(
+          order.order_status,
+          "order"
+        )}`}
+      >
+        {order.order_status || "N/A"}
+      </span>
+    </td>
+    <td className="px-6 py-4">
+      <button
+        onClick={() => onEdit(order)}
+        className="px-3 py-1 bg-gradient-to-r from-rose-500 to-pink-500 hover:opacity-90 text-white rounded-md text-xs mr-2 transition"
+      >
+        Edit
+      </button>
+    </td>
+  </tr>
+));
 
 export default function AllOrders() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -12,35 +53,43 @@ export default function AllOrders() {
   const [editOrder, setEditOrder] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  // Fetch orders
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await axiosInstance.get("/adminside/allorders/");
+      const res = await axios.get("/admin-orders/");
       setOrders(res.data);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const filteredOrders = orders.filter(
-    (order) =>
-      order.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (order.user || order.customer || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  // Memoized filtered orders
+  const filteredOrders = useMemo(
+    () =>
+      orders.filter(
+        (order) =>
+          order.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (order.user || order.customer || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      ),
+    [orders, searchTerm]
   );
 
-  const formatCurrency = (amount) => {
+  // Memoized helpers
+  const formatCurrency = useCallback((amount) => {
     if (!amount) return "₹0";
     return `₹${Number(amount).toLocaleString("en-IN")}`;
-  };
+  }, []);
 
-  const badgeClass = (status, type) => {
+  const badgeClass = useCallback((status, type) => {
     const statusLower = status?.toLowerCase();
     if (type === "payment") {
       if (statusLower === "paid")
@@ -59,28 +108,28 @@ export default function AllOrders() {
       return "bg-gray-100 text-gray-700 border border-gray-200";
     }
     return "";
-  };
+  }, []);
 
-  const handleEdit = (order) => {
+  const handleEdit = useCallback((order) => {
     setEditOrder({ ...order });
-  };
+  }, []);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!editOrder) return;
     setSaving(true);
     try {
-      await axiosInstance.patch(`/adminside/editorder/${editOrder.id}/`, {
+      await axios.patch(`/admin-orders/${editOrder.id}/`, {
         order_status: editOrder.order_status,
         payment_status: editOrder.payment_status,
       });
-      fetchOrders();
+      await fetchOrders();
       setEditOrder(null);
     } catch (error) {
       console.error("Failed to update order:", error);
     } finally {
       setSaving(false);
     }
-  };
+  }, [editOrder, fetchOrders]);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -126,49 +175,13 @@ export default function AllOrders() {
                   <tbody>
                     {filteredOrders.length > 0 ? (
                       filteredOrders.map((order) => (
-                        <tr
+                        <OrderRow
                           key={order.id}
-                          className="hover:bg-gray-50 even:bg-gray-50/50"
-                        >
-                          <td className="px-6 py-4 font-medium text-black">
-                            {order.id}
-                          </td>
-                          <td className="px-6 py-4">{order.user || "—"}</td>
-                          <td className="px-6 py-4">
-                            {new Date(order.created_at).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4">
-                            {formatCurrency(order.total)}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${badgeClass(
-                                order.payment_status,
-                                "payment"
-                              )}`}
-                            >
-                              {order.payment_status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${badgeClass(
-                                order.order_status,
-                                "order"
-                              )}`}
-                            >
-                              {order.order_status || "N/A"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <button
-                              onClick={() => handleEdit(order)}
-                              className="px-3 py-1 bg-gradient-to-r from-rose-500 to-pink-500 hover:opacity-90 text-white rounded-md text-xs mr-2 transition"
-                            >
-                              Edit
-                            </button>
-                          </td>
-                        </tr>
+                          order={order}
+                          onEdit={handleEdit}
+                          formatCurrency={formatCurrency}
+                          badgeClass={badgeClass}
+                        />
                       ))
                     ) : (
                       <tr>

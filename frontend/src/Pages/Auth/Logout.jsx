@@ -1,42 +1,41 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext';
+import axios from 'axios'; // normal axios
 
 export default function Logout() {
   const navigate = useNavigate();
-  const { logout,token } = useAuth();
+  const { logout, token } = useAuth();
 
   useEffect(() => {
     const logoutUser = async () => {
       const refreshToken = localStorage.getItem("refresh_token");
 
-      if (!refreshToken || !token ) {
+      if (!refreshToken || !token) {
         logout();
         navigate("/");
         return;
       }
 
       try {
-        await axiosInstance.post("auth/logout/",
-           { refresh_token : refreshToken },
-           {
-            headers :{
+        await axios.post("/auth/logout/", 
+          { refresh_token: refreshToken },
+          { headers: { 
               'Authorization': `Bearer ${token}`, 
-              'Content-Type': 'application/json',
-            }
-           }
-          );
-        logout();
-        navigate("/");
-      }catch (error) {
+              'Content-Type': 'application/json'
+            } 
+          }
+        );
+      } catch (error) {
         console.error("Logout failed", error);
-        logout()
+      } finally {
+        logout();
         navigate("/");
       }
     };
 
     logoutUser();
-  }, [navigate,logout]);
+  }, [navigate, logout, token]);
 
-  return null;
+  return null; 
 }

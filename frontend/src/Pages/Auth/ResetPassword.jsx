@@ -1,46 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import axios from 'axios';
 import { Lock, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [form, setForm] = useState({ password: '', confirmPassword: '' });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleResetPassword = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage('');
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-    const email = localStorage.getItem('resetEmail');
-    if (!email) {
-      setMessage('Email not found in session. Please restart the reset process.');
-      setLoading(false);
-      return;
-    }
+  const handleResetPassword = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setMessage('');
 
-    try {
-      const res = await axiosInstance.post('auth/reset-password/', {
-        email,
-        password,
-        confirm_password: confirmPassword,
-      });
+      const email = localStorage.getItem('resetEmail');
+      if (!email) {
+        setMessage('Email not found in session. Please restart the reset process.');
+        setLoading(false);
+        return;
+      }
 
-      setMessage(res.data.message || 'Password reset successful!');
-      localStorage.removeItem('resetEmail');
-      setTimeout(() => navigate('/login'), 1500);
-    } catch (error) {
-      setMessage(
-        error.response?.data?.error ||
-        error.response?.data?.non_field_errors ||
-        'Password reset failed'
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const res = await axios.post('/api/users/reset-password/', {
+          email,
+          password: form.password,
+          confirm_password: form.confirmPassword,
+        });
+
+        setMessage(res.data.message || 'Password reset successful!');
+        localStorage.removeItem('resetEmail');
+        setTimeout(() => navigate('/login'), 1500);
+      } catch (error) {
+        setMessage(
+          error.response?.data?.error ||
+          error.response?.data?.non_field_errors ||
+          'Password reset failed'
+        );
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [form, navigate]
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -56,8 +65,9 @@ const ResetPassword = () => {
             <Lock className="absolute top-3 left-3 text-rose-400" size={20} />
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={form.password}
+              onChange={handleInputChange}
               placeholder="New password"
               required
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
@@ -67,15 +77,15 @@ const ResetPassword = () => {
             <Lock className="absolute top-3 left-3 text-rose-400" size={20} />
             <input
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              name="confirmPassword"
+              value={form.confirmPassword}
+              onChange={handleInputChange}
               placeholder="Confirm password"
               required
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
             />
           </div>
-          
-          {/* Matching RegisterPage button theme */}
+
           <button
             type="submit"
             disabled={loading}

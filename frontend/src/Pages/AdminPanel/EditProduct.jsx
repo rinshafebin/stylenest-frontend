@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; // normal axios
 import Sidebar from "../../Components/Admin/Sidebar";
 import Header from "../../Components/Admin/Header";
 import { useParams, useNavigate } from "react-router-dom";
@@ -20,49 +21,46 @@ export default function EditProduct() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`/admin/${id}/update/`); 
+        setFormData({
+          name: res.data.name || "",
+          category: res.data.category || "",
+          price: res.data.price || "",
+          stock: res.data.stock || "",
+          image: null,
+        });
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load product");
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchProduct();
-  }, []);
+  }, [id]);
 
-  async function fetchProduct() {
-    setLoading(true);
-    try {
-      const res = await axiosInstance.get(`/adminside/getproduct/${id}/`);
-      setFormData({
-        name: res.data.name || "",
-        category: res.data.category || "",
-        price: res.data.price || "",
-        stock: res.data.stock || "",
-        image: null,
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load product");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function handleChange(e) {
+  const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
-      setFormData({ ...formData, image: files[0] });
+      setFormData((prev) => ({ ...prev, image: files[0] }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
-  }
+  };
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const form = new FormData();
       Object.keys(formData).forEach((key) => {
-        if (formData[key] !== null) {
-          form.append(key, formData[key]);
-        }
+        if (formData[key] !== null) form.append(key, formData[key]);
       });
 
-      await axiosInstance.patch(`/adminside/updateproduct/${id}/`, form, {
+      await axios.patch(`/admin/${id}/update/`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -74,12 +72,11 @@ export default function EditProduct() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
       <div className="flex-1 flex flex-col">
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -89,15 +86,10 @@ export default function EditProduct() {
           {loading && <p className="text-gray-500">Loading...</p>}
 
           {!loading && (
-            <form
-              onSubmit={handleSubmit}
-              className="bg-white shadow rounded-lg p-6 space-y-4"
-            >
+            <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6 space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Name</label>
                 <input
                   type="text"
                   name="name"
@@ -110,9 +102,7 @@ export default function EditProduct() {
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Category
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Category</label>
                 <select
                   name="category"
                   value={formData.category}
@@ -130,9 +120,7 @@ export default function EditProduct() {
               {/* Price & Stock */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Price (₹)
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
                   <input
                     type="number"
                     name="price"
@@ -143,9 +131,7 @@ export default function EditProduct() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Stock
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Stock</label>
                   <input
                     type="number"
                     name="stock"
@@ -159,9 +145,7 @@ export default function EditProduct() {
 
               {/* Image */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Product Image
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Product Image</label>
                 <input
                   type="file"
                   name="image"

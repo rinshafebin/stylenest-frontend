@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Mail, ArrowRight } from 'lucide-react';
-import axiosInstance from '../../api/axios';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const ForgetPassword = () => {
@@ -9,24 +9,27 @@ const ForgetPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage('');
+  const handleSendOtp = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setMessage('');
 
-    try {
-      const res = await axiosInstance.post('auth/forgot-password/', { email });
-      setMessage(res.data.message);
+      try {
+        const res = await axios.post('api/users/forgot-password/', { email });
+        setMessage(res.data.message);
 
-      localStorage.setItem('resetEmail', email);
+        localStorage.setItem('resetEmail', email);
 
-      setTimeout(() => navigate('/verifyotp'), 1500);
-    } catch (error) {
-      setMessage(error.response?.data?.error || 'email is not exist');
-    } finally {
-      setLoading(false);
-    }
-  };
+        setTimeout(() => navigate('/verifyotp'), 1500);
+      } catch (error) {
+        setMessage(error.response?.data?.error || 'Email does not exist');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [email, navigate]
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -53,7 +56,6 @@ const ForgetPassword = () => {
             </p>
           </div>
 
-          {/* Updated button theme */}
           <button
             type="submit"
             disabled={loading}

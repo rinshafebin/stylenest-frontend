@@ -1,5 +1,6 @@
 // src/pages/admin/Customers.jsx
 import React, { useEffect, useState } from "react";
+import axios from "axios"; // ✅ normal axios
 import Header from "../../Components/Admin/Header";
 import Sidebar from "../../Components/Admin/Sidebar";
 import { Search } from "lucide-react";
@@ -8,41 +9,40 @@ import toast from "react-hot-toast";
 export default function Customers() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [customers, setCustomers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axiosInstance.get("/adminside/allusers")
-        setCustomers(res.data)
+        const res = await axios.get("/admin/users/"); // ✅ updated API path
+        setCustomers(res.data);
       } catch (error) {
-        toast.error("Error fetching customers");
         console.error(error);
+        toast.error("Error fetching customers");
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchCustomers();
-  }, []);
+  }, []); // ✅ empty dependency array prevents re-renders
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Only filter when searchTerm changes
+  const filteredCustomers = React.useMemo(() => {
+    return customers.filter(
+      (customer) =>
+        customer.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [customers, searchTerm]);
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-        {/* Page Content */}
         <main className="p-6 overflow-y-auto">
           <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-6">
@@ -59,7 +59,6 @@ export default function Customers() {
               </div>
             </div>
 
-            {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-600">
                 <thead>
@@ -73,37 +72,42 @@ export default function Customers() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCustomers.map((customer) => (
+                  {!loading && filteredCustomers.map((customer) => (
                     <tr
                       key={customer.id}
                       className="border-b border-gray-100 hover:bg-gray-50"
                     >
-                      <td className="px-6 py-4 font-medium text-black">
-                        {customer.username}
-                      </td>
+                      <td className="px-6 py-4 font-medium text-black">{customer.username}</td>
                       <td className="px-6 py-4">{customer.email}</td>
                       <td className="px-6 py-4">{customer.date_joined}</td>
                       <td className="px-6 py-4">{customer.phone_number}</td>
                       <td className="px-6 py-4">{customer.orders}</td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === "Active"
-                            ? "bg-green-100 text-green-600"
-                            : "bg-red-100 text-red-600"
-                            }`}
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            customer.status === "Active"
+                              ? "bg-green-100 text-green-600"
+                              : "bg-red-100 text-red-600"
+                          }`}
                         >
                           {customer.status}
                         </span>
                       </td>
                     </tr>
                   ))}
-                  {filteredCustomers.length === 0 && (
+
+                  {!loading && filteredCustomers.length === 0 && (
                     <tr>
-                      <td
-                        colSpan="5"
-                        className="px-6 py-4 text-center text-gray-400"
-                      >
+                      <td colSpan="6" className="px-6 py-4 text-center text-gray-400">
                         No customers found.
+                      </td>
+                    </tr>
+                  )}
+
+                  {loading && (
+                    <tr>
+                      <td colSpan="6" className="px-6 py-4 text-center text-gray-400">
+                        Loading customers...
                       </td>
                     </tr>
                   )}

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function ChangePasswordPage() {
     const [oldPassword, setOldPassword] = useState('');
@@ -11,13 +12,13 @@ export default function ChangePasswordPage() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
 
         try {
-            const response = await axiosInstance.post('auth/changepassword/', {
+            const response = await axios.post('api/users/changepassword/', {
                 old_password: oldPassword,
                 new_password: newPassword,
             });
@@ -27,11 +28,18 @@ export default function ChangePasswordPage() {
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong');
         }
-    };
+    }, [oldPassword, newPassword]);
+
+    const toggleOldPassword = useCallback(() => {
+        setShowOldPassword((prev) => !prev);
+    }, []);
+
+    const toggleNewPassword = useCallback(() => {
+        setShowNewPassword((prev) => !prev);
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-100 flex items-center justify-center p-4">
-            {/* Background blur decoration */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-40 -right-40 w-80 h-80 bg-rose-200 rounded-full opacity-20 blur-3xl"></div>
                 <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-200 rounded-full opacity-20 blur-3xl"></div>
@@ -45,7 +53,7 @@ export default function ChangePasswordPage() {
                     </div>
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        {/* Old Password */}
+                        {/* Current Password */}
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700 block">Current Password</label>
                             <div className="relative">
@@ -61,7 +69,7 @@ export default function ChangePasswordPage() {
                                 />
                                 <button
                                     type="button"
-                                    onClick={() => setShowOldPassword(!showOldPassword)}
+                                    onClick={toggleOldPassword}
                                     className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
                                 >
                                     {showOldPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -85,7 +93,7 @@ export default function ChangePasswordPage() {
                                 />
                                 <button
                                     type="button"
-                                    onClick={() => setShowNewPassword(!showNewPassword)}
+                                    onClick={toggleNewPassword}
                                     className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
                                 >
                                     {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -94,12 +102,8 @@ export default function ChangePasswordPage() {
                         </div>
 
                         {/* Feedback Messages */}
-                        {message && (
-                            <div className="text-green-600 text-sm text-center">{message}</div>
-                        )}
-                        {error && (
-                            <div className="text-red-600 text-sm text-center">{error}</div>
-                        )}
+                        {message && <div className="text-green-600 text-sm text-center">{message}</div>}
+                        {error && <div className="text-red-600 text-sm text-center">{error}</div>}
 
                         {/* Submit */}
                         <button

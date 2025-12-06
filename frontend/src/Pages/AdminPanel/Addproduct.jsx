@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Sidebar from "../../Components/Admin/Sidebar";
 import Header from "../../Components/Admin/Header";
-import axios from "axios";   // <-- using normal axios
+import axios from "axios";   // using default axios
 import { Upload, X } from "lucide-react";
 import toast from "react-hot-toast";
+
+// Set a base URL for axios
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 
 export default function AddProduct() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -27,7 +30,8 @@ export default function AddProduct() {
         "w-full rounded-lg px-4 py-2 border border-gray-300 bg-white " +
         "focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-200 placeholder-gray-500 transition duration-200";
 
-    const handleChange = (e) => {
+    // Handle input changes
+    const handleChange = useCallback((e) => {
         const { name, value, files } = e.target;
         if (files) {
             setFormData((prev) => ({ ...prev, [name]: files[0] }));
@@ -35,9 +39,10 @@ export default function AddProduct() {
         } else {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
-    };
+    }, []);
 
-    const handleAddDetail = () => {
+    // Add detail
+    const handleAddDetail = useCallback(() => {
         if (detailInput.trim() && !formData.details.includes(detailInput.trim())) {
             setFormData((prev) => ({
                 ...prev,
@@ -45,16 +50,18 @@ export default function AddProduct() {
             }));
             setDetailInput("");
         }
-    };
+    }, [detailInput, formData.details]);
 
-    const handleRemoveItem = (item) => {
+    // Remove detail
+    const handleRemoveItem = useCallback((item) => {
         setFormData((prev) => ({
             ...prev,
             details: prev.details.filter((i) => i !== item),
         }));
-    };
+    }, []);
 
-    const handleSubmit = async (e) => {
+    // Submit form
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         setLoading(true);
         setMessage("");
@@ -62,22 +69,16 @@ export default function AddProduct() {
         const productData = new FormData();
         Object.keys(formData).forEach((key) => {
             if (Array.isArray(formData[key])) {
-                productData.append(key, JSON.stringify(formData[key])); // <-- send array properly
+                productData.append(key, JSON.stringify(formData[key]));
             } else {
                 productData.append(key, formData[key]);
             }
         });
 
         try {
-            await axios.post(
-                "http://127.0.0.1:8000/api/products/admin/create/",
-                productData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
-            );
+            await axios.post("/api/products/admin/create/", productData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
 
             toast.success("Product added successfully!");
 
@@ -92,14 +93,20 @@ export default function AddProduct() {
             });
 
             setImagePreview(null);
-
         } catch (err) {
             console.error(err);
             toast.error("Failed to add product.");
         } finally {
             setLoading(false);
         }
-    };
+    }, [formData]);
+
+    // Cleanup image preview URL
+    useEffect(() => {
+        return () => {
+            if (imagePreview) URL.revokeObjectURL(imagePreview);
+        };
+    }, [imagePreview]);
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
@@ -113,10 +120,11 @@ export default function AddProduct() {
 
                             {message && (
                                 <p
-                                    className={`mb-4 p-3 rounded-lg ${message.includes("✅")
-                                        ? "bg-green-50 text-green-600"
-                                        : "bg-red-50 text-red-600"
-                                        }`}
+                                    className={`mb-4 p-3 rounded-lg ${
+                                        message.includes("✅")
+                                            ? "bg-green-50 text-green-600"
+                                            : "bg-red-50 text-red-600"
+                                    }`}
                                 >
                                     {message}
                                 </p>
