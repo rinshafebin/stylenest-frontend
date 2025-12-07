@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
-import Sidebar from "../../Components/Admin/Sidebar";
-import Header from "../../Components/Admin/Header";
+import Header from "../../Components/Common/Admin/Header";
+import Sidebar from "../../Components/Common/Admin/Sidebar";
 import axios from "axios";
 import { Upload, X } from "lucide-react";
 import toast from "react-hot-toast";

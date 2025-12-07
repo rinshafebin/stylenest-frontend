@@ -1,8 +1,10 @@
 // src/pages/admin/DashboardHome.jsx
 import React, { useState, useMemo } from "react";
-import Header from "../../Components/Admin/Header";
-import Sidebar from "../../Components/Admin/Sidebar";
-import StatsCard from "../../Components/Admin/StatsCard";
+import Header from "../../Components/Common/Admin/Header";
+import Sidebar from "../../Components/Common/Admin/Sidebar";
+import StatsCard from "../../Components/Common/Admin/StatsCard";
+
+
 import { ShoppingBag, Users, DollarSign, Star } from "lucide-react";
 
 export default function AdminDashboard() {

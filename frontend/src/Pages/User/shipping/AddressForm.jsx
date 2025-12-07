@@ -1,22 +1,25 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { User, Home, MapPin, Globe, Phone } from "lucide-react";
 import AddressInput from "./AddressInput";
 
-export default function AddressForm({
+function AddressForm({
   formData,
   setFormData,
   errors,
   saving,
   handleSubmit,
 }) {
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
+  // Memoized change handler
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    },
+    [setFormData]
+  );
 
   return (
     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
       <AddressInput
         icon={<User />}
         label="Full Name / Address Line 1"
@@ -26,7 +29,6 @@ export default function AddressForm({
         error={errors.address_line1}
         full
       />
-
       <AddressInput
         icon={<Home />}
         label="Address Line 2"
@@ -36,7 +38,6 @@ export default function AddressForm({
         error={errors.address_line2}
         full
       />
-
       <AddressInput
         icon={<MapPin />}
         label="City"
@@ -45,7 +46,6 @@ export default function AddressForm({
         onChange={handleChange}
         error={errors.city}
       />
-
       <AddressInput
         icon={<MapPin />}
         label="State"
@@ -54,7 +54,6 @@ export default function AddressForm({
         onChange={handleChange}
         error={errors.state}
       />
-
       <AddressInput
         icon={<MapPin />}
         label="Zip Code"
@@ -63,7 +62,6 @@ export default function AddressForm({
         onChange={handleChange}
         error={errors.zip_code}
       />
-
       <AddressInput
         icon={<Globe />}
         label="Country"
@@ -72,7 +70,6 @@ export default function AddressForm({
         onChange={handleChange}
         error={errors.country}
       />
-
       <AddressInput
         icon={<Phone />}
         label="Phone Number"
@@ -96,3 +93,6 @@ export default function AddressForm({
     </form>
   );
 }
+
+// Wrap with React.memo to prevent unnecessary re-renders
+export default React.memo(AddressForm);

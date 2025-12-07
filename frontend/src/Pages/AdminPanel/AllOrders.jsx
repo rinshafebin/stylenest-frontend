@@ -1,8 +1,8 @@
 // src/pages/admin/Orders.jsx
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
-import Header from "../../Components/Admin/Header";
-import Sidebar from "../../Components/Admin/Sidebar";
+import Header from "../../Components/Common/Admin/Header";
+import Sidebar from "../../Components/Common/Admin/Sidebar";
 import { Search } from "lucide-react";
 
 // Memoized row component

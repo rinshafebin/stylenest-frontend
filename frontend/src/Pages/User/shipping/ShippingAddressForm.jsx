@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { MapPin } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from '../../../context/AuthContext'
-import Navbar from "../../../Components/Common/Navbar";
+import { useAuth } from '../../../context/AuthContext';
+import Navbar from "../../../Components/Common/Nav/Navbar";
 import Footer from "../../../Components/Common/Footer";
 
-import AddressForm from '../../../Components/Layout/AddressForm'
-import AddressLoader from '../../../Components/Layout/AddressLoader'
+import AddressForm from './AddressForm';
+import AddressLoader from './AddressLoader';
 
 export default function ShippingAddressForm() {
   const navigate = useNavigate();
@@ -28,14 +28,15 @@ export default function ShippingAddressForm() {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Fetch address
   const fetchAddress = useCallback(async () => {
     if (!token) return navigate("/login");
 
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/orders/shipping-address/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/orders/shipping-address/",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       if (res.data) setFormData(res.data);
     } catch {
       toast("No existing address found.");
@@ -48,7 +49,8 @@ export default function ShippingAddressForm() {
     fetchAddress();
   }, [fetchAddress]);
 
-  const handleSubmit = async (e) => {
+  // Memoized submit handler
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setSaving(true);
     setErrors({});
@@ -68,7 +70,16 @@ export default function ShippingAddressForm() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [formData, token, navigate]);
+
+  // Memoize props passed to AddressForm to prevent unnecessary re-renders
+  const formProps = useMemo(() => ({
+    formData,
+    setFormData,
+    errors,
+    saving,
+    handleSubmit
+  }), [formData, setFormData, errors, saving, handleSubmit]);
 
   if (loading) return <AddressLoader />;
 
@@ -81,14 +92,7 @@ export default function ShippingAddressForm() {
             <MapPin className="text-rose-500" /> Shipping Address
           </h2>
 
-          {/* FORM COMPONENT */}
-          <AddressForm
-            formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            saving={saving}
-            handleSubmit={handleSubmit}
-          />
+          <AddressForm {...formProps} />
         </div>
       </div>
       <Footer />

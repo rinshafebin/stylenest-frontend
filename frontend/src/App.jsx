@@ -5,7 +5,7 @@ import Homepage from './Pages/Home/HomePage'
 import Logout from './Pages/Auth/Logout'
 import ChangePassword from './Pages/Auth/ChangePassword'
 import CartPage from './Pages/User/cart/CartPage'
-import Wishlist from './Pages/User/Wishlist'
+import WishlistPage from './Pages/User/wishlist/WishlistPage'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomeAllProducts from './Pages/Home/HomeAllProducts'
 import ProductbyCategory from './Pages/Home/ProductsbyCategory'
@@ -14,9 +14,9 @@ import { Toaster } from 'react-hot-toast'
 import ForgetPassword from './Pages/Auth/ForgetPassword'
 import Verifyotp from './Pages/Auth/Verifyotp'
 import Profile from './Pages/User/Profile'
-import Orders from './Pages/User/Orders'
+import OrdersPage from './Pages/User/orders/OrdersPage'
 import ProductDetails from './Pages/Home/ProductDetail'
-import Checkout from './Pages/User/Checkout'
+import CheckoutPage from './Pages/User/CheckoutPage'
 import AddProduct from './Pages/AdminPanel/Addproduct'
 import AdminDashboard from './Pages/AdminPanel/AdminDashboard'
 import Customers from './Pages/AdminPanel/Customers'
@@ -44,12 +44,12 @@ function App() {
             <Route path='/productdetails/:id' element={<ProductDetails />} />
 
             <Route path='/cart' element={<CartPage />} />
-            <Route path='/wishlist' element={<Wishlist />} />
+            <Route path='/wishlist' element={<WishlistPage />} />
             <Route path='/profile' element={<Profile />} />
             <Route path="/search" element={<SearchResults />} />
-            <Route path='/orders' element={<Orders />} />
+            <Route path='/orders' element={<OrdersPage />} />
             <Route path='/shippingaddress' element={<ShippingAddressForm />} />
-            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
 
             <Route path='/changepassword' element={<ChangePassword />} />
             <Route path='/forgetpassword' element={<ForgetPassword />} />

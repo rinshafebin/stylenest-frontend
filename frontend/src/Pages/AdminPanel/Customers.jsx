@@ -1,8 +1,8 @@
 // src/pages/admin/Customers.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // ✅ normal axios
-import Header from "../../Components/Admin/Header";
-import Sidebar from "../../Components/Admin/Sidebar";
+import axios from "axios"; 
+import Header from "../../Components/Common/Admin/Header";
+import Sidebar from "../../Components/Common/Admin/Sidebar";
 import { Search } from "lucide-react";
 import toast from "react-hot-toast";
 

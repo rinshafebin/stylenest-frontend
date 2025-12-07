@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function AddressInput({ icon, label, name, value, onChange, error, full }) {
+function AddressInput({ icon, label, name, value, onChange, error, full }) {
   return (
     <div className={`${full ? "md:col-span-2" : ""}`}>
       <label className="text-sm font-medium text-gray-700 mb-1 block">{label}</label>
@@ -23,3 +23,16 @@ export default function AddressInput({ icon, label, name, value, onChange, error
     </div>
   );
 }
+
+// Wrap in React.memo to avoid rerenders if props don't change
+export default React.memo(AddressInput, (prevProps, nextProps) => {
+  return (
+    prevProps.value === nextProps.value &&
+    prevProps.error === nextProps.error &&
+    prevProps.full === nextProps.full &&
+    prevProps.name === nextProps.name &&
+    prevProps.label === nextProps.label &&
+    prevProps.icon === nextProps.icon &&
+    prevProps.onChange === nextProps.onChange
+  );
+});

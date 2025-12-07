@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Heart, ShoppingBag, Star } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // adjust path if needed
+import { useAuth } from '../../../context/AuthContext'; // adjust path if needed
 
 export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth(); // get token from AuthContext
 
-
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
 
-  const imageUrl = product.image
-    ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
-    : 'https://via.placeholder.com/300x300?text=No+Image';
+  // Memoize image URL to prevent recomputation
+  const imageUrl = useMemo(() => {
+    return product.image
+      ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+      : 'https://via.placeholder.com/300x300?text=No+Image';
+  }, [product.image, BACKEND_URL]);
 
-  // Add to Cart
-  const handleAddToCart = async () => {
+  // Memoized Add to Cart handler
+  const handleAddToCart = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to add to cart.');
       return;
@@ -25,7 +27,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/cart/add/`,
+        `${BACKEND_URL}/api/cart/add/`,
         { product_id: product.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -33,10 +35,10 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     } catch (error) {
       toast.error('Something went wrong adding to cart.');
     }
-  };
+  }, [product.id, token, BACKEND_URL]);
 
-  // Add to Wishlist
-  const handleAddToWishlist = async () => {
+  // Memoized Add to Wishlist handler
+  const handleAddToWishlist = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to use wishlist.');
       return;
@@ -44,7 +46,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/cart/wishlist/`,
+        `${BACKEND_URL}/api/cart/wishlist/add/`,
         { product_id: product.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -53,7 +55,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     } catch (error) {
       toast.error('Something went wrong adding to wishlist.');
     }
-  };
+  }, [product.id, token, BACKEND_URL]);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition duration-300 flex flex-col">

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // normal axios
-import Sidebar from "../../Components/Admin/Sidebar";
-import Header from "../../Components/Admin/Header";
+import axios from "axios"; 
+import Header from "../../Components/Common/Admin/Header";
+import Sidebar from "../../Components/Common/Admin/Sidebar";
+
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios'; // normal axios
-import ProductGrid from '../../Components/Products/ProductGrid';
-import Navbar from '../../Components/Common/Navbar';
+import ProductGrid from '../User/Products/ProductGrid';
+import Navbar from '../../Components/Common/Nav/Navbar';
 import Footer from '../../Components/Common/Footer';
 import toast from 'react-hot-toast';
 

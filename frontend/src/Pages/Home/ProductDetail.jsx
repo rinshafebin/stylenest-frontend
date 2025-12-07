@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useParams } from "react-router-dom";
-import Navbar from "../../Components/Common/Navbar";
+import Navbar from "../../Components/Common/Nav/Navbar";
 import Footer from "../../Components/Common/Footer";
 import toast from "react-hot-toast";
 import { useAuth } from '../../context/AuthContext';
@@ -66,7 +66,7 @@ export default function ProductDetails() {
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/cart/wishlist/`, 
+        `http://127.0.0.1:8000/api/cart/wishlist/add/`, 
         { product_id: product.id },
         { headers: { Authorization: `Bearer ${token}` } } 
       );

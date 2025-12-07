@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Truck, Shield, RefreshCw, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Navbar from '../../Components/Common/Navbar';
+import Navbar from '../../Components/Common/Nav/Navbar';
 import Footer from '../../Components/Common/Footer';
 
 import women from '../../Assets/women.jpg';

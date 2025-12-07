@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import Navbar from '../../../Components/Common/Navbar';
+import Navbar from '../../../Components/Common/Nav/Navbar';
 import Footer from "../../../Components/Common/Footer";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -75,7 +75,7 @@ export default function CartPage() {
   };
 
   const handleCheckout = () => {
-    navigate("/shippingaddress");
+    navigate("/checkout");
   };
 
   const { totalPrice, totalItems } = useMemo(() => {

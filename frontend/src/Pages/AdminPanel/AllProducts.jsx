@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; 
 import { Edit, Trash2, PlusCircle, Search } from "lucide-react";
-import Sidebar from "../../Components/Admin/Sidebar";
-import Header from "../../Components/Admin/Header";
+import Header from "../../Components/Common/Admin/Header";
+import Sidebar from "../../Components/Common/Admin/Sidebar";
 import { Link } from "react-router-dom";
 
 export default function AllProducts() {

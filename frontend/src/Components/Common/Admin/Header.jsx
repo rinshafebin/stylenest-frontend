@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Menu, Bell, User, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from '../../../context/AuthContext';
 import toast from "react-hot-toast";
 
 // Memoized Menu Button

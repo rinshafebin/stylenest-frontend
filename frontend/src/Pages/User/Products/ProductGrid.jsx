@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 
-export default function ProductGrid({ products }) {
+function ProductGrid({ products }) {
   const productList = Array.isArray(products) ? products : [];
 
   if (!productList.length) {
@@ -17,3 +17,5 @@ export default function ProductGrid({ products }) {
     </div>
   );
 }
+
+export default React.memo(ProductGrid);

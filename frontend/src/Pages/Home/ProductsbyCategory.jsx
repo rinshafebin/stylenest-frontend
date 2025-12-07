@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import ProductGrid from "../../Components/Products/ProductGrid";
-import Navbar from "../../Components/Common/Navbar";
+import ProductGrid from "../User/Products/ProductGrid";
+import Navbar from "../../Components/Common/Nav/Navbar";
 import Footer from '../../Components/Common/Footer';
 
 export default function CategoryProducts() {
