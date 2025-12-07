@@ -3,16 +3,21 @@ import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default React.memo(function SearchBar() {
+const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
+  // Fetch search suggestions (debounced)
   const fetchSearchResults = useCallback(async () => {
-    if (!searchTerm.trim()) return setSearchResults([]);
+    const query = searchTerm.trim();
+    if (!query) return setSearchResults([]);
+
     try {
-      const res = await axios.get(`/search/?query=${searchTerm}`);
-      setSearchResults(Array.isArray(res.data) ? res.data : res.data.results || []);
+      const res = await axios.get(
+        `https://web-production-777c7.up.railway.app/api/products/search/?q=${query}`
+      );
+      setSearchResults(Array.isArray(res.data.results) ? res.data.results : res.data);
     } catch (err) {
       console.error(err);
     }
@@ -25,15 +30,18 @@ export default React.memo(function SearchBar() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?query=${searchTerm}`);
-      setSearchResults([]);
-    }
+    const query = searchTerm.trim();
+    if (!query) return;
+    navigate(`/search?query=${query}`);
+    setSearchResults([]);
   };
 
   return (
     <div className="relative">
-      <form onSubmit={handleSubmit} className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-1 shadow-sm w-fit">
+      <form
+        onSubmit={handleSubmit}
+        className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-1 shadow-sm w-fit"
+      >
         <input
           type="text"
           value={searchTerm}
@@ -45,13 +53,14 @@ export default React.memo(function SearchBar() {
           <Search className="w-5 h-5 text-gray-600 hover:text-rose-600" />
         </button>
       </form>
+
       {searchResults.length > 0 && (
         <ul className="absolute top-full mt-2 left-0 bg-white border border-rose-200 rounded-md shadow-lg w-full max-w-xs max-h-60 overflow-y-auto z-50">
           {searchResults.map((product) => (
             <li
               key={product.id}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-              onClick={() => navigate(`/product/${product.id}`)}
+              onClick={() => navigate(`/products/${product.id}`)}
             >
               {product.name}
             </li>
@@ -60,4 +69,6 @@ export default React.memo(function SearchBar() {
       )}
     </div>
   );
-});
+};
+
+export default React.memo(SearchBar);

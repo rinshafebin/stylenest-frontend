@@ -57,7 +57,7 @@ export default function AllOrders() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get(" http://127.0.0.1:8000/api/orders/admin-orders/");
+      const res = await axios.get("https://web-production-777c7.up.railway.app/api/orders/admin-orders/");
       setOrders(res.data);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -118,7 +118,7 @@ export default function AllOrders() {
     if (!editOrder) return;
     setSaving(true);
     try {
-      await axios.patch(`/admin-orders/${editOrder.id}/`, {
+      await axios.patch(`https://web-production-777c7.up.railway.app/api/orders/admin-orders/${editOrder.id}/`, {
         order_status: editOrder.order_status,
         payment_status: editOrder.payment_status,
       });

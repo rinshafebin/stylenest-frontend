@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import axios from 'axios'; // normal axios
+import axios from 'axios';
 import { KeyRound, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,20 +19,25 @@ const VerifyOtp = () => {
       setLoading(true);
       setMessage('');
 
-      try {
-        const email = localStorage.getItem('resetEmail');
-        if (!email) {
-          setMessage('Email not found. Please restart the process.');
-          setLoading(false);
-          return;
-        }
+      const email = localStorage.getItem('resetEmail');
+      if (!email) {
+        setMessage('Email not found. Please restart the process.');
+        setLoading(false);
+        return;
+      }
 
+      try {
         const res = await axios.post('http://127.0.0.1:8000/api/users/verify-otp/', { email, otp });
         setMessage(res.data.message || 'OTP verified successfully!');
         setTimeout(() => navigate('/resetpassword'), 1500);
       } catch (error) {
-        setMessage(error.response?.data?.error || 'Invalid OTP');
-        console.error(error);
+        if (error.response?.data?.otp) {
+          setMessage(error.response.data.otp);
+        } else if (error.response?.data?.email) {
+          setMessage(error.response.data.email);
+        } else {
+          setMessage('Invalid OTP');
+        }
       } finally {
         setLoading(false);
       }

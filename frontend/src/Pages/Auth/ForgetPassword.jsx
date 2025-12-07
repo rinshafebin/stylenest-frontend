@@ -18,12 +18,16 @@ const ForgetPassword = () => {
       try {
         const res = await axios.post('http://127.0.0.1:8000/api/users/forgot-password/', { email });
         setMessage(res.data.message);
-
         localStorage.setItem('resetEmail', email);
-
         setTimeout(() => navigate('/verifyotp'), 1500);
       } catch (error) {
-        setMessage(error.response?.data?.error || 'Email does not exist');
+        if (error.response?.data?.email) {
+          setMessage(error.response.data.email[0]);
+        } else if (error.response?.data?.error) {
+          setMessage(error.response.data.error);
+        } else {
+          setMessage('Email does not exist');
+        }
       } finally {
         setLoading(false);
       }

@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import ProductCard from '../../Pages/User/Products/ProductCard'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
 
 const SearchResults = () => {
   const [results, setResults] = useState([]);
   const location = useLocation();
 
-  const searchTerm = new URLSearchParams(location.search).get('search') || '';
+  // Get search term from URL
+  const searchTerm = new URLSearchParams(location.search).get('query') || '';
 
-  // Fetch results
   const fetchResults = useCallback(async () => {
     if (!searchTerm.trim()) {
       setResults([]);
@@ -17,11 +19,15 @@ const SearchResults = () => {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/products/search/?search=${searchTerm}`
+        `${BACKEND_URL}/api/products/search/?q=${searchTerm}`
       );
-      setResults(response.data || []);
+
+      // Support both paginated (results) and non-paginated responses
+      const data = response.data.results || response.data || [];
+      setResults(data);
     } catch (error) {
       console.error('Search error:', error.response?.data || error.message);
+      setResults([]);
     }
   }, [searchTerm]);
 
@@ -38,18 +44,7 @@ const SearchResults = () => {
       {results.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {results.map((product) => (
-            <Link
-              key={product.id}
-              to={`/products/${product.id}`}
-              className="border p-2 rounded"
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-40 object-cover"
-              />
-              <h2 className="text-sm mt-2">{product.name}</h2>
-            </Link>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (

@@ -1,3 +1,5 @@
+// src/Pages/Login/Login.jsx
+
 import React, { useState, useCallback } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -21,9 +23,16 @@ export const Login = () => {
       setLoading(true);
 
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/users/login/', { email, password });
-        const { access, refresh, user } = response.data;
-        login(access, refresh, user);
+        const response = await axios.post(
+          'http://127.0.0.1:8000/api/users/login/',
+          { email, password }
+        );
+
+        // Get the values INCLUDING cart_count
+        const { access, refresh, user, cart_count } = response.data;
+
+        // 🔥 FIX: Pass cart_count also
+        login(access, refresh, user, cart_count);
 
         toast.success("Login successfully");
 
@@ -35,13 +44,17 @@ export const Login = () => {
 
       } catch (err) {
         console.error(err);
+
         if (err.response?.data) {
           const data = err.response.data;
+
           if (typeof data.detail === "string") {
             setError(data.detail);
           } else {
             const firstKey = Object.keys(data)[0];
-            setError(Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]);
+            setError(
+              Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]
+            );
           }
         } else {
           setError("Something went wrong. Please try again.");
@@ -54,7 +67,7 @@ export const Login = () => {
   );
 
   const togglePassword = useCallback(() => {
-    setShowPassword(prev => !prev);
+    setShowPassword((prev) => !prev);
   }, []);
 
   return (
@@ -67,14 +80,20 @@ export const Login = () => {
       <div className="relative w-full max-w-md">
         <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200 p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back!</h1>
-            <p className="text-gray-600">Sign in to your account to continue</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Welcome back!
+            </h1>
+            <p className="text-gray-600">
+              Sign in to your account to continue
+            </p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 block">Email Address</label>
+              <label className="text-sm font-medium text-gray-700 block">
+                Email Address
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
@@ -91,7 +110,9 @@ export const Login = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 block">Password</label>
+              <label className="text-sm font-medium text-gray-700 block">
+                Password
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -108,7 +129,11 @@ export const Login = () => {
                   onClick={togglePassword}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -126,7 +151,11 @@ export const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 px-6 rounded-xl font-semibold focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl group ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:from-rose-600 hover:to-pink-600'}`}
+              className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 px-6 rounded-xl font-semibold focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl group ${
+                loading
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:from-rose-600 hover:to-pink-600'
+              }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <span>{loading ? 'Signing in...' : 'Sign In'}</span>
@@ -159,4 +188,4 @@ export const Login = () => {
   );
 }
 
-export default Login;
+export default Login; 

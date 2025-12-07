@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function ChangePasswordPage() {
     const [oldPassword, setOldPassword] = useState('');
@@ -10,33 +12,46 @@ export default function ChangePasswordPage() {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+
+    const { token } = useAuth(); // get token from context
     const navigate = useNavigate();
+
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
 
+        if (!token) {
+            toast.error('You need to be logged in to change your password.');
+            return;
+        }
+
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api//users/changepassword/', {
-                old_password: oldPassword,
-                new_password: newPassword,
-            });
-            setMessage(response.data.message);
+            const response = await axios.post(
+                `${BACKEND_URL}/api/users/changepassword/`,
+                {
+                    old_password: oldPassword,
+                    new_password: newPassword,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setMessage(response.data.message || 'Password updated successfully.');
             setOldPassword('');
             setNewPassword('');
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong');
         }
-    }, [oldPassword, newPassword]);
+    }, [oldPassword, newPassword, token, BACKEND_URL]);
 
-    const toggleOldPassword = useCallback(() => {
-        setShowOldPassword((prev) => !prev);
-    }, []);
-
-    const toggleNewPassword = useCallback(() => {
-        setShowNewPassword((prev) => !prev);
-    }, []);
+    const toggleOldPassword = useCallback(() => setShowOldPassword(prev => !prev), []);
+    const toggleNewPassword = useCallback(() => setShowNewPassword(prev => !prev), []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-100 flex items-center justify-center p-4">

@@ -77,7 +77,7 @@ export default function AddProduct() {
 
             try {
                 await axios.post(
-                    "http://127.0.0.1:8000/api/products/admin/create/",
+                    "https://web-production-777c7.up.railway.app/api/products/admin/create/",
                     productData,
                     {
                         headers: {

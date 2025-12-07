@@ -38,12 +38,16 @@ const ResetPassword = () => {
         localStorage.removeItem('resetEmail');
         setTimeout(() => navigate('/login'), 1500);
       } catch (error) {
-        setMessage(
-          error.response?.data?.error ||
-          error.response?.data?.non_field_errors ||
-          'Password reset failed'
-        );
-        console.error(error);
+        // Handle DRF errors
+        if (error.response?.data?.password) {
+          setMessage(error.response.data.password);
+        } else if (error.response?.data?.confirm_password) {
+          setMessage(error.response.data.confirm_password);
+        } else if (error.response?.data?.non_field_errors) {
+          setMessage(error.response.data.non_field_errors[0]);
+        } else {
+          setMessage('Password reset failed');
+        }
       } finally {
         setLoading(false);
       }
