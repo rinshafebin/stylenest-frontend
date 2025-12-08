@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import React from "react";
 
 export default function CartItem({ item, BACKEND_URL, onQtyChange, onRemove, onCheckout }) {
   return (

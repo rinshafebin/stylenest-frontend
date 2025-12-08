@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function EmptyCart() {
   return (
     <div className="bg-white rounded-xl shadow p-10 text-center">

@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function OrderSummary({ totalPrice, totalItems, onCheckout }) {
   return (
     <div className="bg-white p-6 rounded-xl shadow sticky top-24">

@@ -1,4 +1,5 @@
-// OrderRow.jsx
+import React from "react";
+
 const OrderRow = React.memo(function OrderRow({ order, onEdit, formatCurrency, badgeClass }) {
   return (
     <tr className="hover:bg-gray-50 even:bg-gray-50/50">
