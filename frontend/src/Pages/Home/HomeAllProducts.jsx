@@ -9,7 +9,7 @@ export default function HomeAllProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_BACKEND_URL;
 
   const fetchProducts = useCallback(async () => {
     try {
