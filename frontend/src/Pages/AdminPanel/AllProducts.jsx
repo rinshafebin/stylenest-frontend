@@ -12,7 +12,8 @@ export default function AllProducts() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const token = localStorage.getItem("access_token"); 
+  const token = localStorage.getItem("access_token");
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -39,25 +40,23 @@ export default function AllProducts() {
     };
 
     fetchProducts();
-  }, [token]); 
+  }, [token]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
+
     try {
       await axios.delete(
         `https://stylenest.up.railway.app/api/products/admin/delete/${id}/`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       setProducts(products.filter((p) => p.id !== id));
     } catch (err) {
       console.error(err);
-      alert(
-        err?.response?.data?.detail || "Failed to delete product"
-      );
+      alert(err?.response?.data?.detail || "Failed to delete product");
     }
   };
 
@@ -129,6 +128,7 @@ export default function AllProducts() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {filteredProducts.map((product, idx) => (
                     <tr
@@ -140,7 +140,7 @@ export default function AllProducts() {
                       <td className="px-6 py-4">
                         {product.image ? (
                           <img
-                            src={product.image.startsWith("http") ? product.image : `https://stylenest.up.railway.app${product.image}`}
+                            src={product.image}
                             alt={product.name}
                             className="w-16 h-16 object-cover rounded"
                           />
@@ -153,10 +153,13 @@ export default function AllProducts() {
                       <td className="px-6 py-4 text-sm text-gray-700">{product.category}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">₹{product.price}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{product.stock}</td>
+
                       <td className="px-6 py-4 text-sm">
                         <div className="flex items-center gap-3">
                           <Link to={`/editproduct/${product.id}/`}>
-                            <button className="text-blue-500 hover:text-blue-700"><Edit size={18} /></button>
+                            <button className="text-blue-500 hover:text-blue-700">
+                              <Edit size={18} />
+                            </button>
                           </Link>
                           <button
                             className="text-red-500 hover:text-red-700"
@@ -166,12 +169,15 @@ export default function AllProducts() {
                           </button>
                         </div>
                       </td>
+
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
           )}
+
         </main>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header from '../../../Components/Common/Admin/Header'
+import Header from "../../../Components/Common/Admin/Header";
 import Sidebar from "../../../Components/Common/Admin/Sidebar";
 import AddProductForm from "./AddProductForm";
 

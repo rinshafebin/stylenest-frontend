@@ -11,9 +11,12 @@ function ProductDetailsInput({ details, setDetails }) {
     }
   }, [input, details, setDetails]);
 
-  const removeDetail = useCallback((item) => {
-    setDetails(details.filter((d) => d !== item));
-  }, [details, setDetails]);
+  const removeDetail = useCallback(
+    (item) => {
+      setDetails(details.filter((d) => d !== item));
+    },
+    [details, setDetails]
+  );
 
   return (
     <div>
@@ -41,7 +44,11 @@ function ProductDetailsInput({ details, setDetails }) {
             className="bg-rose-100 px-3 py-1 rounded-full flex items-center gap-1"
           >
             {detail}
-            <X className="cursor-pointer" size={14} onClick={() => removeDetail(detail)} />
+            <X
+              className="cursor-pointer"
+              size={14}
+              onClick={() => removeDetail(detail)}
+            />
           </span>
         ))}
       </div>

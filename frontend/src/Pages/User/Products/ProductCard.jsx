@@ -9,10 +9,9 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth();
 
+  // Cloudinary-compatible image URL
   const imageUrl = product.image
-    ? product.image.startsWith('http')
-      ? product.image
-      : `https://stylenest.up.railway.app${product.image.startsWith('/') ? '' : '/'}${product.image}`
+    ? product.image
     : 'https://via.placeholder.com/300x300?text=No+Image';
 
   // Add to cart
