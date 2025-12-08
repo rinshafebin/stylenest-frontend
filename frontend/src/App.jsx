@@ -63,7 +63,7 @@ function App() {
             <Route path='/allproducts' element={<AllProducts />} />
             <Route path='/allcustomers' element={<Customers />} />
             <Route path='/allorders' element={<AllOrders />} />
-            <Route path='/editproduct/:id/' element={<EditProduct />} />
+            <Route path='/editproduct/:id' element={<EditProduct />} />
           </Routes>
         </div>
       </div>

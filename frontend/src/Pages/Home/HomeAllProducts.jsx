@@ -12,7 +12,7 @@ export default function HomeAllProducts() {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ;
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/products/list/`);
+      const response = await axios.get(`https://stylenest.up.railway.app/api/products/list/`);
       setProducts(response.data.results || []);
       console.log('Fetched products:', response.data);
     } catch (error) {

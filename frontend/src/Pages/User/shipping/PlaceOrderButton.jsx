@@ -7,9 +7,6 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
   const { token } = useAuth();
   const navigate = useNavigate();
 
-  // Use environment backend URL
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
-
   const handlePlaceOrder = useCallback(async () => {
     if (!shippingInfo) return alert("Please select a shipping address.");
     if (!selectedPayment) return alert("Please select a payment method.");
@@ -20,7 +17,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
 
       // Create order
       const res = await axios.post(
-        `${BACKEND_URL}/api/orders/create/`,
+        `https://stylenest.up.railway.app/api/orders/create/`,
         {
           payment_method: selectedPayment,
           shipping_address: shippingInfo.id,
@@ -48,7 +45,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
         handler: async (response) => {
           try {
             await axios.post(
-              `${BACKEND_URL}/api/orders/verify-payment/`,
+              `https://stylenest.up.railway.app/api/orders/verify-payment/`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
@@ -85,7 +82,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
     } finally {
       setLoading(false);
     }
-  }, [selectedPayment, shippingInfo, token, navigate, setLoading, BACKEND_URL]);
+  }, [selectedPayment, shippingInfo, token, navigate, setLoading]);
 
   return (
     <button

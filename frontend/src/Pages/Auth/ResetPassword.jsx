@@ -9,8 +9,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Backend URL from environment
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -31,7 +30,7 @@ const ResetPassword = () => {
       }
 
       try {
-        const res = await axios.post(`${BASE_URL}/api/users/reset-password/`, {
+        const res = await axios.post(`https://stylenest.up.railway.app/api/users/reset-password/`, {
           email,
           password: form.password,
           confirm_password: form.confirmPassword,

@@ -12,12 +12,11 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(`${BACKEND_URL}/api/admin/users/`); 
+        const res = await axios.get(`https://stylenest.up.railway.app/api/users/admin/users/`); 
         setCustomers(res.data);
       } catch (error) {
         console.error(error);

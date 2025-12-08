@@ -3,9 +3,6 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ProductCard from '../../Pages/User/Products/ProductCard';
 
-// Backend URL from .env or fallback to localhost
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
-
 const SearchResults = () => {
   const [results, setResults] = useState([]);
   const location = useLocation();
@@ -21,10 +18,9 @@ const SearchResults = () => {
 
     try {
       const response = await axios.get(
-        `${BACKEND_URL}/api/products/search/?q=${encodeURIComponent(searchTerm)}`
+        `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(searchTerm)}`
       );
 
-      // Support both paginated (results) and non-paginated responses
       const data = response.data.results || response.data || [];
       setResults(data);
     } catch (error) {

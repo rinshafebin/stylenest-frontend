@@ -12,17 +12,17 @@ const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Backend URL from .env
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-
   const fetchOrders = useCallback(async () => {
     if (!token) return;
 
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/api/orders/user-orders/`, {
-        headers: { Authorization: `Bearer ${token.trim()}` },
-      });
+      const res = await axios.get(
+        `https://stylenest.up.railway.app/api/orders/user-orders/`,
+        {
+          headers: { Authorization: `Bearer ${token.trim()}` },
+        }
+      );
 
       setOrders(res.data);
     } catch (err) {
@@ -31,7 +31,7 @@ const OrdersPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [token, BASE_URL]);
+  }, [token]); 
 
   useEffect(() => {
     fetchOrders();

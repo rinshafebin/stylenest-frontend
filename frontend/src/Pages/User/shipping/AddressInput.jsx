@@ -24,7 +24,6 @@ function AddressInput({ icon, label, name, value, onChange, error, full }) {
   );
 }
 
-// Wrap in React.memo to avoid rerenders if props don't change
 export default React.memo(AddressInput, (prevProps, nextProps) => {
   return (
     prevProps.value === nextProps.value &&

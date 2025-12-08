@@ -12,9 +12,7 @@ export default function AllProducts() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const token = localStorage.getItem("access_token"); // get token from localStorage
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
-
+  const token = localStorage.getItem("access_token"); 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -22,7 +20,7 @@ export default function AllProducts() {
 
       try {
         const res = await axios.get(
-          `${BACKEND_URL}/api/products/admin/all/`,
+          `https://stylenest.up.railway.app/api/products/admin/all/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -47,7 +45,7 @@ export default function AllProducts() {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await axios.delete(
-        `${BACKEND_URL}/api/products/admin/${id}/delete/`,
+        `https://stylenest.up.railway.app/api/products/admin/delete/${id}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

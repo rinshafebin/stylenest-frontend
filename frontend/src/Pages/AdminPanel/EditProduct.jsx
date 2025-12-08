@@ -6,8 +6,6 @@ import Sidebar from "../../Components/Common/Admin/Sidebar";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-// Base URL from .env
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
 
 export default function EditProduct() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -28,7 +26,7 @@ export default function EditProduct() {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/admin/${id}/update/`);
+        const res = await axios.get(`https://stylenest.up.railway.app/api/products/admin/update/${id}/`);
         setFormData({
           name: res.data.name || "",
           category: res.data.category || "",

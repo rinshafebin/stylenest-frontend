@@ -9,7 +9,6 @@ const VerifyOtp = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const API = import.meta.env.VITE_API_URL;  // ✅ Use your hosted backend URL
 
   const handleChange = useCallback((e) => {
     setOtp(e.target.value);
@@ -29,7 +28,7 @@ const VerifyOtp = () => {
       }
 
       try {
-        const res = await axios.post(`${API}/users/verify-otp/`, {
+        const res = await axios.post(`https://stylenest.up.railway.app/api/users/verify-otp/`, {
           email,
           otp,
         });

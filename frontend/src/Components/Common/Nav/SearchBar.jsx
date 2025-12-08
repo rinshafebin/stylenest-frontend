@@ -8,16 +8,15 @@ const SearchBar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // <- your .env variable
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; 
 
-  // Fetch search suggestions (debounced)
   const fetchSearchResults = useCallback(async () => {
     const query = searchTerm.trim();
     if (!query) return setSearchResults([]);
 
     try {
       const res = await axios.get(
-        `${BACKEND_URL}/api/products/search/?q=${query}`
+        `https://stylenest.up.railway.app/api/products/search/?q=${query}`
       );
       setSearchResults(Array.isArray(res.data.results) ? res.data.results : res.data);
     } catch (err) {

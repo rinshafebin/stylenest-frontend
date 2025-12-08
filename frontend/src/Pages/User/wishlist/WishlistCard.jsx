@@ -1,12 +1,9 @@
 import React from "react";
 
-
-const BASE_URL = import.meta.env.VITE_API_URL;
-
 const WishlistCard = React.memo(({ item, onAddToCart, onRemove }) => {
   const imageUrl = item.product.image.startsWith("http")
     ? item.product.image
-    : `${BASE_URL}${item.product.image}`; 
+    : `https://stylenest.up.railway.app${item.product.image.startsWith('/') ? '' : '/'}${item.product.image}`;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
@@ -23,7 +20,7 @@ const WishlistCard = React.memo(({ item, onAddToCart, onRemove }) => {
           {item.product.name}
         </h3>
 
-        <p className="text-gray-600 mb-3">${item.product.price}</p>
+        <p className="text-gray-600 mb-3">₹{item.product.price}</p>
 
         <div className="flex gap-2">
           <button

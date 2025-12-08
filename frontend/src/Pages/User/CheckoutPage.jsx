@@ -7,8 +7,6 @@ import PaymentOptions from "./shipping/PaymentOptions";
 import PlaceOrderButton from "./shipping/PlaceOrderButton";
 import { useAuth } from "../../context/AuthContext";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
-
 export default function CheckoutPage() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -29,7 +27,7 @@ export default function CheckoutPage() {
 
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/orders/shipping-address/`,
+        `https://stylenest.up.railway.app/api/orders/shipping-address/`,
         {
           headers: { Authorization: `Bearer ${trimmedToken}` },
         }

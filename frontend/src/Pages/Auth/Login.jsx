@@ -16,8 +16,6 @@ export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // ✅ Load Backend URL from .env
-  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -27,7 +25,7 @@ export const Login = () => {
 
       try {
         const response = await axios.post(
-          `${API_URL}/api/users/login/`,
+          `https://stylenest.up.railway.app/api/users/login/`,
           { email, password }
         );
 

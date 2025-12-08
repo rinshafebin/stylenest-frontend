@@ -13,15 +13,12 @@ export default function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(null);
   const { token } = useAuth();
 
-  // Environment backend URL
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
-
   // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `${BACKEND_URL}/api/products/${id}/`
+          `https://stylenest.up.railway.app/api/products/${id}/`
         );
         setProduct(response.data);
       } catch (error) {
@@ -30,7 +27,7 @@ export default function ProductDetails() {
       }
     };
     fetchProduct();
-  }, [id, BACKEND_URL]);
+  }, [id]);
 
   // Add to Cart
   const handleAddToCart = async () => {
@@ -43,12 +40,13 @@ export default function ProductDetails() {
 
     try {
       await axios.post(
-        `${BACKEND_URL}/api/cart/add/`,
+        `https://stylenest.up.railway.app/api/cart/add/`,
         { product_id: product.id, quantity: 1, size: selectedSize || null },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Product added to cart");
     } catch (error) {
+      console.error(error);
       toast.error("Something went wrong adding to cart.");
     }
   };
@@ -64,12 +62,13 @@ export default function ProductDetails() {
 
     try {
       await axios.post(
-        `${BACKEND_URL}/api/cart/wishlist/add/`,
+        `https://stylenest.up.railway.app/api/cart/wishlist/add/`,
         { product_id: product.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Product added to wishlist!");
     } catch (error) {
+      console.error(error);
       toast.error("Something went wrong adding to wishlist.");
     }
   };
@@ -86,7 +85,7 @@ export default function ProductDetails() {
 
   // Image URL fix
   const imageUrl = product.image
-    ? `${BACKEND_URL}${product.image.startsWith("/") ? "" : "/"}${product.image}`
+    ? `https://stylenest.up.railway.app${product.image.startsWith("/") ? "" : "/"}${product.image}`
     : "https://via.placeholder.com/500x500?text=No+Image";
 
   return (
@@ -135,7 +134,6 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-
 
       <Footer />
     </div>

@@ -9,8 +9,6 @@ import { useAuth } from "../../../context/AuthContext";
 import WishlistCard from "./WishlistCard";
 import EmptyWishlist from "./EmptyWishlist";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
-
 const WishlistPage = () => {
   const { token } = useAuth();
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -19,14 +17,14 @@ const WishlistPage = () => {
 
   const fetchWishlist = useCallback(async () => {
     if (!token) {
-      setLoading(false); // Stop loading if not logged in
+      setLoading(false);
       return;
     }
 
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/cart/wishlist/`,
+        `https://stylenest.up.railway.app/api/cart/wishlist/`,
         { headers: { Authorization: `Bearer ${token.trim()}` } }
       );
 
@@ -125,6 +123,5 @@ const WishlistPage = () => {
     </div>
   );
 };
-
 
 export default WishlistPage;

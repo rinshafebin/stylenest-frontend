@@ -13,11 +13,9 @@ export default function ChangePasswordPage() {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
-    const { token } = useAuth(); // get token from context
+    const { token } = useAuth(); 
     const navigate = useNavigate();
 
-    // Use .env backend URL
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
@@ -31,7 +29,7 @@ export default function ChangePasswordPage() {
 
         try {
             const response = await axios.post(
-                `${BACKEND_URL}/api/users/changepassword/`,
+                `https://stylenest.up.railway.app/api/users/changepassword/`,
                 {
                     old_password: oldPassword,
                     new_password: newPassword,

@@ -22,7 +22,7 @@ function AddressForm({
     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <AddressInput
         icon={<User />}
-        label="Full Name / Address Line 1"
+        label="Full Name "
         name="address_line1"
         value={formData.address_line1}
         onChange={handleChange}
@@ -94,5 +94,4 @@ function AddressForm({
   );
 }
 
-// Wrap with React.memo to prevent unnecessary re-renders
 export default React.memo(AddressForm);

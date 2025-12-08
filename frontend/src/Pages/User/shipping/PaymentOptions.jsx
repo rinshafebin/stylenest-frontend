@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { CreditCard, Wallet } from "lucide-react";
 
 function PaymentOptions({ selectedPayment, setSelectedPayment }) {
-  // Memoized click handler to avoid recreating the function on every render
   const handleSelect = useCallback(
     (method) => {
       setSelectedPayment(method);
@@ -49,7 +48,6 @@ function PaymentOptions({ selectedPayment, setSelectedPayment }) {
   );
 }
 
-// Wrap in React.memo to prevent unnecessary rerenders
 export default React.memo(PaymentOptions, (prevProps, nextProps) => {
   return prevProps.selectedPayment === nextProps.selectedPayment &&
          prevProps.setSelectedPayment === nextProps.setSelectedPayment;

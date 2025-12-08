@@ -15,18 +15,17 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
-
+  // Fetch cart items
   useEffect(() => {
     if (token) fetchCart();
   }, [token]);
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/api/cart/list/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await axios.get(
+        `https://stylenest.up.railway.app/api/cart/list/`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setCartItems(res.data.cart_items || []);
     } catch (error) {
       toast.error("Failed to load cart");
@@ -49,7 +48,7 @@ export default function CartPage() {
 
     try {
       await axios.patch(
-        `${BACKEND_URL}/api/cart/${id}/update/`,
+        `https://stylenest.up.railway.app/api/cart/${id}/update/`,
         { quantity: newQty },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -65,9 +64,10 @@ export default function CartPage() {
     setCartItems(updated);
 
     try {
-      await axios.delete(`${BACKEND_URL}/api/cart/${id}/remove/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://stylenest.up.railway.app/api/cart/${id}/remove/`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
     } catch (error) {
       toast.error("Failed to remove item");
       fetchCart();
@@ -117,7 +117,8 @@ export default function CartPage() {
                 <CartItem
                   key={item.id}
                   item={item}
-                  BACKEND_URL={BACKEND_URL}
+                  // pass full URL for CartItem if it needs API calls
+                  apiBaseUrl="https://stylenest.up.railway.app"
                   onQtyChange={handleQuantityChange}
                   onRemove={handleRemove}
                   onCheckout={handleCheckout}

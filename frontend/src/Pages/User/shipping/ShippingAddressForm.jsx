@@ -28,16 +28,13 @@ export default function ShippingAddressForm() {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // ENV backend URL
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
-
-  // Fetch address
+  // Fetch existing address
   const fetchAddress = useCallback(async () => {
     if (!token) return navigate("/login");
 
     try {
       const res = await axios.get(
-        `${BACKEND_URL}/api/orders/shipping-address/`,
+        `https://stylenest.up.railway.app/api/orders/shipping-address/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.data) setFormData(res.data);
@@ -46,7 +43,7 @@ export default function ShippingAddressForm() {
     } finally {
       setLoading(false);
     }
-  }, [token, navigate, BACKEND_URL]);
+  }, [token, navigate]);
 
   useEffect(() => {
     fetchAddress();
@@ -61,7 +58,7 @@ export default function ShippingAddressForm() {
 
       try {
         await axios.post(
-          `${BACKEND_URL}/api/orders/shipping-address/`,
+          `https://stylenest.up.railway.app/api/orders/shipping-address/`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -75,10 +72,9 @@ export default function ShippingAddressForm() {
         setSaving(false);
       }
     },
-    [formData, token, navigate, BACKEND_URL]
+    [formData, token, navigate]
   );
 
-  // Memoized props for AddressForm
   const formProps = useMemo(
     () => ({
       formData,

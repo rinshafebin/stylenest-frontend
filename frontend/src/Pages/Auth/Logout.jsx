@@ -18,7 +18,7 @@ export default function Logout() {
       }
 
       try {
-        await axios.post("/auth/logout/", 
+        await axios.post("https://stylenest.up.railway.app/auth/logout/", 
           { refresh_token: refreshToken },
           { headers: { 
               'Authorization': `Bearer ${token}`, 

@@ -41,7 +41,7 @@ export default function RegisterPage() {
 
       try {
         const res = await axios.post(
-          `${API_URL}/api/users/register/`,
+          `https://stylenest.up.railway.app/api/users/register/`,
           {
             username: formData.username,
             email: formData.email,

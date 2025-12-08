@@ -9,8 +9,6 @@ const ForgetPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Get backend URL from env
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   const handleSendOtp = useCallback(
     async (e) => {
@@ -20,7 +18,7 @@ const ForgetPassword = () => {
 
       try {
         const res = await axios.post(
-          `${BASE_URL}/api/users/forgot-password/`,
+          `https://stylenest.up.railway.app/api/users/forgot-password/`,
           { email }
         );
 
