@@ -13,7 +13,7 @@ export default function AllProducts() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const token = localStorage.getItem("access_token"); // get token from localStorage
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // <- your .env variable
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
 
   useEffect(() => {
     const fetchProducts = async () => {

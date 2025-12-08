@@ -24,7 +24,7 @@ export default function AddProduct() {
 
     const [detailInput, setDetailInput] = useState("");
 
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
 
     const inputClass =
         "w-full rounded-lg px-4 py-2 border border-gray-300 bg-white " +

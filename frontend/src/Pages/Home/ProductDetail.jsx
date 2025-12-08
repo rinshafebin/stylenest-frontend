@@ -118,27 +118,6 @@ export default function ProductDetails() {
 
           <p className="text-gray-600 mt-6 leading-relaxed">{product.description}</p>
 
-          {Array.isArray(product.sizes) && product.sizes.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-gray-700 font-semibold mb-2">Select Size</h3>
-              <div className="flex space-x-3">
-                {product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`border px-4 py-2 rounded-lg transition ${
-                      selectedSize === size
-                        ? "border-rose-500 bg-rose-100"
-                        : "border-gray-300 hover:border-rose-500"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div className="flex items-center space-x-4 mt-8">
             <button
               onClick={handleAddToCart}
@@ -157,14 +136,6 @@ export default function ProductDetails() {
         </div>
       </div>
 
-      {product.details && (
-        <div className="container mx-auto px-6 py-10 border-t border-gray-200">
-          <h2 className="text-xl font-semibold mb-4">Product Details</h2>
-          <div className="text-gray-600 whitespace-pre-line">
-            {product.details}
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>

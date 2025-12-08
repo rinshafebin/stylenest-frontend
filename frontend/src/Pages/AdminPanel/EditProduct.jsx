@@ -7,7 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Base URL from .env
-const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
 
 export default function EditProduct() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

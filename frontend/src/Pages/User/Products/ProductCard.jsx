@@ -9,17 +9,14 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth();
 
-  // ✅ Use your ENV API base URL
   const API = import.meta.env.VITE_API_URL;
 
-  // 🖼️ Fix full image path
   const imageUrl = useMemo(() => {
     return product.image
       ? `${API}${product.image.startsWith('/') ? '' : '/'}${product.image}`
       : 'https://via.placeholder.com/300x300?text=No+Image';
   }, [product.image, API]);
 
-  // 🛒 Add to Cart
   const handleAddToCart = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to add to cart.');
@@ -38,7 +35,6 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     }
   }, [product.id, token, API]);
 
-  // ❤️ Add to Wishlist
   const handleAddToWishlist = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to use wishlist.');
