@@ -39,7 +39,7 @@ export default function AllProducts() {
     };
 
     fetchProducts();
-  }, [token, BACKEND_URL]); 
+  }, [token]); 
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
