@@ -9,14 +9,17 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth();
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  // ✅ Use your ENV API base URL
+  const API = import.meta.env.VITE_API_URL;
 
+  // 🖼️ Fix full image path
   const imageUrl = useMemo(() => {
     return product.image
-      ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+      ? `${API}${product.image.startsWith('/') ? '' : '/'}${product.image}`
       : 'https://via.placeholder.com/300x300?text=No+Image';
-  }, [product.image, BACKEND_URL]);
+  }, [product.image, API]);
 
+  // 🛒 Add to Cart
   const handleAddToCart = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to add to cart.');
@@ -25,7 +28,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
     try {
       await axios.post(
-        `${BACKEND_URL}/api/cart/add/`,
+        `${API}/cart/add/`,
         { product_id: product.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -33,8 +36,9 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     } catch (error) {
       toast.error('Something went wrong adding to cart.');
     }
-  }, [product.id, token, BACKEND_URL]);
+  }, [product.id, token, API]);
 
+  // ❤️ Add to Wishlist
   const handleAddToWishlist = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to use wishlist.');
@@ -43,7 +47,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
     try {
       await axios.post(
-        `${BACKEND_URL}/api/cart/wishlist/add/`,
+        `${API}/cart/wishlist/add/`,
         { product_id: product.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -52,7 +56,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     } catch (error) {
       toast.error('Something went wrong adding to wishlist.');
     }
-  }, [product.id, token, BACKEND_URL]);
+  }, [product.id, token, API]);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition duration-300 flex flex-col">

@@ -17,6 +17,7 @@ export default function CategoryProducts() {
             const response = await axios.get(
                 `${BASE_URL}/api/products/category/${category}`
             );
+            setProducts(response.data);
         } catch (error) {
             console.error("Failed to fetch products:", error);
         }
