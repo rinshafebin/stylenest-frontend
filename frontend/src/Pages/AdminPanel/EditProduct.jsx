@@ -62,7 +62,7 @@ export default function EditProduct() {
         if (formData[key] !== null) form.append(key, formData[key]);
       });
 
-      await axios.patch(`${BASE_URL}/admin/${id}/update/`, form, {
+      await axios.patch(`https://stylenest.up.railway.app/api/products/admin/update/${id}/`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
