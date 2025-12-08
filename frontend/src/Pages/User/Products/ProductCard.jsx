@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Heart, ShoppingBag, Star } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -9,18 +9,18 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth();
 
-  const imageUrl = useMemo(() => {
-    return product.image
-      ? `https://stylenest.up.railway.app${product.image.startsWith('/') ? '' : '/'}${product.image}`
-      : 'https://via.placeholder.com/300x300?text=No+Image';
-  }, [product.image]);
+  const imageUrl = product.image
+    ? product.image.startsWith('http')
+      ? product.image
+      : `https://stylenest.up.railway.app${product.image.startsWith('/') ? '' : '/'}${product.image}`
+    : 'https://via.placeholder.com/300x300?text=No+Image';
 
+  // Add to cart
   const handleAddToCart = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to add to cart.');
       return;
     }
-
     try {
       await axios.post(
         `https://stylenest.up.railway.app/api/cart/add/`,
@@ -33,13 +33,12 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     }
   }, [product.id, token]);
 
-
+  // Add to wishlist
   const handleAddToWishlist = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to use wishlist.');
       return;
     }
-
     try {
       await axios.post(
         `https://stylenest.up.railway.app/api/cart/wishlist/add/`,
