@@ -24,6 +24,8 @@ export default function AddProduct() {
 
     const [detailInput, setDetailInput] = useState("");
 
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
     const inputClass =
         "w-full rounded-lg px-4 py-2 border border-gray-300 bg-white " +
         "focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-200 placeholder-gray-500 transition duration-200";
@@ -77,7 +79,7 @@ export default function AddProduct() {
 
             try {
                 await axios.post(
-                    "https://web-production-777c7.up.railway.app/api/products/admin/create/",
+                    `${BACKEND_URL}/api/products/admin/create/`,
                     productData,
                     {
                         headers: {
@@ -105,7 +107,7 @@ export default function AddProduct() {
                 setLoading(false);
             }
         },
-        [formData, token]
+        [formData, token, BACKEND_URL]
     );
 
     useEffect(() => {

@@ -16,7 +16,8 @@ export default function ChangePasswordPage() {
     const { token } = useAuth(); // get token from context
     const navigate = useNavigate();
 
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
+    // Use .env backend URL
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();

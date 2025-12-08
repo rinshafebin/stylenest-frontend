@@ -13,6 +13,7 @@ export default function AllProducts() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const token = localStorage.getItem("access_token"); // get token from localStorage
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // <- your .env variable
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -21,7 +22,7 @@ export default function AllProducts() {
 
       try {
         const res = await axios.get(
-          "http://127.0.0.1:8000/api/products/admin/all/",
+          `${BACKEND_URL}/api/products/admin/all/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -40,13 +41,13 @@ export default function AllProducts() {
     };
 
     fetchProducts();
-  }, [token]); 
+  }, [token, BACKEND_URL]); 
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/api/products/admin/${id}/delete/`,
+        `${BACKEND_URL}/api/products/admin/${id}/delete/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -141,7 +142,7 @@ export default function AllProducts() {
                       <td className="px-6 py-4">
                         {product.image ? (
                           <img
-                            src={product.image.startsWith("http") ? product.image : `${product.image}`}
+                            src={product.image.startsWith("http") ? product.image : `${BACKEND_URL}${product.image}`}
                             alt={product.name}
                             className="w-16 h-16 object-cover rounded"
                           />

@@ -11,6 +11,9 @@ const Profile = () => {
     address: ''
   });
 
+  // Backend URL from .env
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   // Load user from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -35,7 +38,7 @@ const Profile = () => {
   const handleUpdate = useCallback(async () => {
     try {
       const res = await axios.patch(
-        'http://127.0.0.1:8000/api/user/profile/',
+        `${BASE_URL}/api/user/profile/`,
         formData
       );
       setUser(res.data.data);
@@ -44,7 +47,7 @@ const Profile = () => {
     } catch (error) {
       console.error('Update failed', error.response?.data || error.message);
     }
-  }, [formData]);
+  }, [formData, BASE_URL]);
 
   if (!user) {
     return (

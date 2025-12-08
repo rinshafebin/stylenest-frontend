@@ -12,10 +12,12 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // <- your .env variable
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(" http://127.0.0.1:8000/api/admin/users/"); 
+        const res = await axios.get(`${BACKEND_URL}/api/admin/users/`); 
         setCustomers(res.data);
       } catch (error) {
         console.error(error);
@@ -25,7 +27,8 @@ export default function Customers() {
       }
     };
     fetchCustomers();
-  }, []); 
+  }, [BACKEND_URL]); 
+
   // Only filter when searchTerm changes
   const filteredCustomers = React.useMemo(() => {
     return customers.filter(

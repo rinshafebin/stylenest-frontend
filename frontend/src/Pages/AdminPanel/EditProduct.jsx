@@ -1,10 +1,13 @@
+// src/pages/admin/EditProduct.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios"; 
 import Header from "../../Components/Common/Admin/Header";
 import Sidebar from "../../Components/Common/Admin/Sidebar";
-
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+
+// Base URL from .env
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function EditProduct() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -25,7 +28,7 @@ export default function EditProduct() {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/admin/${id}/update/`); 
+        const res = await axios.get(`${BASE_URL}/admin/${id}/update/`);
         setFormData({
           name: res.data.name || "",
           category: res.data.category || "",
@@ -61,7 +64,7 @@ export default function EditProduct() {
         if (formData[key] !== null) form.append(key, formData[key]);
       });
 
-      await axios.patch(`/admin/${id}/update/`, form, {
+      await axios.patch(`${BASE_URL}/admin/${id}/update/`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

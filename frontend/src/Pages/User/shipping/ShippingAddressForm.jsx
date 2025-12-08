@@ -28,13 +28,16 @@ export default function ShippingAddressForm() {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // ENV backend URL
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
+
   // Fetch address
   const fetchAddress = useCallback(async () => {
     if (!token) return navigate("/login");
 
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/api/orders/shipping-address/",
+        `${BACKEND_URL}/api/orders/shipping-address/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.data) setFormData(res.data);
@@ -43,43 +46,49 @@ export default function ShippingAddressForm() {
     } finally {
       setLoading(false);
     }
-  }, [token, navigate]);
+  }, [token, navigate, BACKEND_URL]);
 
   useEffect(() => {
     fetchAddress();
   }, [fetchAddress]);
 
-  // Memoized submit handler
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setErrors({});
+  // Submit handler
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setSaving(true);
+      setErrors({});
 
-    try {
-      await axios.post(
-        "http://127.0.0.1:8000/api/orders/shipping-address/",
-        formData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      try {
+        await axios.post(
+          `${BACKEND_URL}/api/orders/shipping-address/`,
+          formData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      toast.success("Address saved!");
-      navigate("/checkout");
-    } catch (err) {
-      if (err.response?.data) setErrors(err.response.data);
-      toast.error("Failed to save address.");
-    } finally {
-      setSaving(false);
-    }
-  }, [formData, token, navigate]);
+        toast.success("Address saved!");
+        navigate("/checkout");
+      } catch (err) {
+        if (err.response?.data) setErrors(err.response.data);
+        toast.error("Failed to save address.");
+      } finally {
+        setSaving(false);
+      }
+    },
+    [formData, token, navigate, BACKEND_URL]
+  );
 
-  // Memoize props passed to AddressForm to prevent unnecessary re-renders
-  const formProps = useMemo(() => ({
-    formData,
-    setFormData,
-    errors,
-    saving,
-    handleSubmit
-  }), [formData, setFormData, errors, saving, handleSubmit]);
+  // Memoized props for AddressForm
+  const formProps = useMemo(
+    () => ({
+      formData,
+      setFormData,
+      errors,
+      saving,
+      handleSubmit,
+    }),
+    [formData, errors, saving, handleSubmit]
+  );
 
   if (loading) return <AddressLoader />;
 

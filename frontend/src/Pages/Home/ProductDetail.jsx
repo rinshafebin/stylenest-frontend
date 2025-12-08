@@ -5,8 +5,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../../Components/Common/Nav/Navbar";
 import Footer from "../../Components/Common/Footer";
 import toast from "react-hot-toast";
-import { useAuth } from '../../context/AuthContext';
-
+import { useAuth } from "../../context/AuthContext";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -14,16 +13,15 @@ export default function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(null);
   const { token } = useAuth();
 
-
-  // Use environment variable for backend URL
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
+  // Environment backend URL
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
 
   // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/products/${id}/`
+          `${BACKEND_URL}/api/products/${id}/`
         );
         setProduct(response.data);
       } catch (error) {
@@ -39,7 +37,7 @@ export default function ProductDetails() {
     if (!product) return;
 
     if (!token) {
-      toast.error('You need to be logged in to add to cart.');
+      toast.error("You need to be logged in to add to cart.");
       return;
     }
 
@@ -47,7 +45,7 @@ export default function ProductDetails() {
       await axios.post(
         `${BACKEND_URL}/api/cart/add/`,
         { product_id: product.id, quantity: 1, size: selectedSize || null },
-        { headers: { Authorization: `Bearer ${token}` } } // <-- Pass token here
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Product added to cart");
     } catch (error) {
@@ -60,22 +58,21 @@ export default function ProductDetails() {
     if (!product) return;
 
     if (!token) {
-      toast.error('You need to be logged in to use wishlist.');
+      toast.error("You need to be logged in to use wishlist.");
       return;
     }
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/cart/wishlist/add/`, 
+        `${BACKEND_URL}/api/cart/wishlist/add/`,
         { product_id: product.id },
-        { headers: { Authorization: `Bearer ${token}` } } 
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Product added to wishlist!");
     } catch (error) {
       toast.error("Something went wrong adding to wishlist.");
     }
   };
-
 
   if (!product) {
     return (
@@ -87,17 +84,16 @@ export default function ProductDetails() {
     );
   }
 
-  // Construct image URL safely
+  // Image URL fix
   const imageUrl = product.image
-    ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
-    : 'https://via.placeholder.com/500x500?text=No+Image';
+    ? `${BACKEND_URL}${product.image.startsWith("/") ? "" : "/"}${product.image}`
+    : "https://via.placeholder.com/500x500?text=No+Image";
 
   return (
     <div className="bg-white min-h-screen">
       <Navbar />
 
       <div className="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* Product Image */}
         <div className="flex justify-center">
           <img
             src={imageUrl}
@@ -106,7 +102,6 @@ export default function ProductDetails() {
           />
         </div>
 
-        {/* Product Info */}
         <div className="flex flex-col justify-center">
           <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
 
@@ -123,7 +118,6 @@ export default function ProductDetails() {
 
           <p className="text-gray-600 mt-6 leading-relaxed">{product.description}</p>
 
-          {/* Sizes */}
           {Array.isArray(product.sizes) && product.sizes.length > 0 && (
             <div className="mt-6">
               <h3 className="text-gray-700 font-semibold mb-2">Select Size</h3>
@@ -132,10 +126,11 @@ export default function ProductDetails() {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`border px-4 py-2 rounded-lg transition ${selectedSize === size
+                    className={`border px-4 py-2 rounded-lg transition ${
+                      selectedSize === size
                         ? "border-rose-500 bg-rose-100"
                         : "border-gray-300 hover:border-rose-500"
-                      }`}
+                    }`}
                   >
                     {size}
                   </button>
@@ -144,7 +139,6 @@ export default function ProductDetails() {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex items-center space-x-4 mt-8">
             <button
               onClick={handleAddToCart}
@@ -163,7 +157,6 @@ export default function ProductDetails() {
         </div>
       </div>
 
-      {/* Product Details */}
       {product.details && (
         <div className="container mx-auto px-6 py-10 border-t border-gray-200">
           <h2 className="text-xl font-semibold mb-4">Product Details</h2>

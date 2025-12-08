@@ -7,6 +7,8 @@ import PaymentOptions from "./shipping/PaymentOptions";
 import PlaceOrderButton from "./shipping/PlaceOrderButton";
 import { useAuth } from "../../context/AuthContext";
 
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function CheckoutPage() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -14,12 +16,12 @@ export default function CheckoutPage() {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [loading, setLoading] = useState(true); // loading addresses
-  const [placingOrder, setPlacingOrder] = useState(false); // place order button
+  const [loading, setLoading] = useState(true); 
+  const [placingOrder, setPlacingOrder] = useState(false); 
 
   const fetchAddresses = useCallback(async () => {
     const trimmedToken = token?.trim();
-    
+
     if (!trimmedToken) {
       console.warn("No token found, redirecting to login...");
       return navigate("/login");
@@ -27,7 +29,7 @@ export default function CheckoutPage() {
 
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/api/orders/shipping-address/",
+        `${BASE_URL}/api/orders/shipping-address/`,
         {
           headers: { Authorization: `Bearer ${trimmedToken}` },
         }

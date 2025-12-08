@@ -9,6 +9,8 @@ const VerifyOtp = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const API = import.meta.env.VITE_API_URL;  // ✅ Use your hosted backend URL
+
   const handleChange = useCallback((e) => {
     setOtp(e.target.value);
   }, []);
@@ -27,8 +29,13 @@ const VerifyOtp = () => {
       }
 
       try {
-        const res = await axios.post('http://127.0.0.1:8000/api/users/verify-otp/', { email, otp });
+        const res = await axios.post(`${API}/users/verify-otp/`, {
+          email,
+          otp,
+        });
+
         setMessage(res.data.message || 'OTP verified successfully!');
+
         setTimeout(() => navigate('/resetpassword'), 1500);
       } catch (error) {
         if (error.response?.data?.otp) {
@@ -42,7 +49,7 @@ const VerifyOtp = () => {
         setLoading(false);
       }
     },
-    [otp, navigate]
+    [otp, navigate, API]
   );
 
   return (
@@ -54,6 +61,7 @@ const VerifyOtp = () => {
         <p className="text-sm text-gray-600 text-center mb-6">
           Enter the 6-digit OTP sent to your registered email.
         </p>
+
         <form onSubmit={handleVerifyOtp} className="space-y-5">
           <div className="relative">
             <KeyRound className="absolute top-3 left-3 text-rose-400" size={20} />
@@ -72,12 +80,13 @@ const VerifyOtp = () => {
             type="submit"
             disabled={loading}
             className="w-full flex justify-center items-center gap-2 
-                       bg-gradient-to-r from-pink-500 to-pink-600 
-                       text-white py-2 rounded-md 
-                       hover:from-pink-600 hover:to-pink-700 
-                       transition duration-300 disabled:opacity-50"
+              bg-gradient-to-r from-pink-500 to-pink-600 
+              text-white py-2 rounded-md 
+              hover:from-pink-600 hover:to-pink-700 
+              transition duration-300 disabled:opacity-50"
           >
-            {loading ? 'Verifying...' : 'Verify OTP'} <CheckCircle2 size={18} />
+            {loading ? 'Verifying...' : 'Verify OTP'}
+            <CheckCircle2 size={18} />
           </button>
 
           {message && (

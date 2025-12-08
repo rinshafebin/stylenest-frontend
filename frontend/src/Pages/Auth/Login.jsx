@@ -16,6 +16,9 @@ export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // ✅ Load Backend URL from .env
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
@@ -24,14 +27,14 @@ export const Login = () => {
 
       try {
         const response = await axios.post(
-          'http://127.0.0.1:8000/api/users/login/',
+          `${API_URL}/api/users/login/`,
           { email, password }
         );
 
-        // Get the values INCLUDING cart_count
+        // Extracting all values
         const { access, refresh, user, cart_count } = response.data;
 
-        // 🔥 FIX: Pass cart_count also
+        // Save login info
         login(access, refresh, user, cart_count);
 
         toast.success("Login successfully");
@@ -53,7 +56,9 @@ export const Login = () => {
           } else {
             const firstKey = Object.keys(data)[0];
             setError(
-              Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey]
+              Array.isArray(data[firstKey])
+                ? data[firstKey][0]
+                : data[firstKey]
             );
           }
         } else {
@@ -63,7 +68,7 @@ export const Login = () => {
         setLoading(false);
       }
     },
-    [email, password, login, navigate]
+    [email, password, login, navigate, API_URL]
   );
 
   const togglePassword = useCallback(() => {
@@ -186,6 +191,6 @@ export const Login = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Login; 
+export default Login;

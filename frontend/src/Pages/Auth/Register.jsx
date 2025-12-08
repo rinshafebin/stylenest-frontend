@@ -19,6 +19,9 @@ export default function RegisterPage() {
 
   const [error, setError] = useState('');
 
+  // Load backend URL from .env
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
   // Memoized input handler
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -40,7 +43,7 @@ export default function RegisterPage() {
 
       try {
         const res = await axios.post(
-          "http://127.0.0.1:8000/api/users/register/",
+          `${API_URL}/api/users/register/`,
           {
             username: formData.username,
             email: formData.email,
@@ -62,7 +65,7 @@ export default function RegisterPage() {
         }
       }
     },
-    [formData, navigate]
+    [formData, navigate, API_URL]
   );
 
   return (
@@ -148,7 +151,7 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-2 rounded-md hover:from-pink-600 hover:to-pink-700 transition duration-300"
+          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-pink-500 to-ppink-600 text-white py-2 rounded-md hover:from-pink-600 hover:to-pink-700 transition duration-300"
         >
           Create Account <ArrowRight size={16} />
         </button>

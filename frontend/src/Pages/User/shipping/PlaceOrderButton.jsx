@@ -7,6 +7,9 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
   const { token } = useAuth();
   const navigate = useNavigate();
 
+  // Use environment backend URL
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
+
   const handlePlaceOrder = useCallback(async () => {
     if (!shippingInfo) return alert("Please select a shipping address.");
     if (!selectedPayment) return alert("Please select a payment method.");
@@ -15,9 +18,9 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
     try {
       setLoading(true);
 
-      // Create order in backend
+      // Create order
       const res = await axios.post(
-        "http://127.0.0.1:8000/api/orders/create/",
+        `${BACKEND_URL}/api/orders/create/`,
         {
           payment_method: selectedPayment,
           shipping_address: shippingInfo.id,
@@ -25,31 +28,32 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
         { headers: { Authorization: `Bearer ${token.trim()}` } }
       );
 
+      // COD Orders
       if (selectedPayment === "cod") {
         alert("Order placed successfully!");
         navigate(`/order/${res.data.order_id}`);
         return;
       }
 
-      // Razorpay flow
+      // Razorpay Online Payment
       const { razorpay_order_id, amount, currency, key, order_id } = res.data;
 
       const options = {
-        key: key,
-        amount: amount,
-        currency: currency,
+        key,
+        amount,
+        currency,
         name: "My Shop",
         description: "Order Payment",
         order_id: razorpay_order_id,
         handler: async (response) => {
           try {
             await axios.post(
-              "http://127.0.0.1:8000/api/orders/verify-payment/",
+              `${BACKEND_URL}/api/orders/verify-payment/`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
-                order_id: order_id,
+                order_id,
               },
               { headers: { Authorization: `Bearer ${token.trim()}` } }
             );
@@ -57,7 +61,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
             alert("Payment successful!");
             navigate(`/order/${order_id}`);
           } catch (err) {
-            console.error("Payment verification failed:", err.response || err);
+            console.error("Payment verification failed:", err);
             alert("Payment verification failed!");
           }
         },
@@ -81,7 +85,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
     } finally {
       setLoading(false);
     }
-  }, [selectedPayment, shippingInfo, token, navigate, setLoading]);
+  }, [selectedPayment, shippingInfo, token, navigate, setLoading, BACKEND_URL]);
 
   return (
     <button
@@ -96,12 +100,11 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
   );
 }
 
-// Wrap in React.memo to prevent rerenders if props don't change
-export default React.memo(PlaceOrderButton, (prevProps, nextProps) => {
-  return (
+export default React.memo(
+  PlaceOrderButton,
+  (prevProps, nextProps) =>
     prevProps.selectedPayment === nextProps.selectedPayment &&
     prevProps.shippingInfo === nextProps.shippingInfo &&
     prevProps.loading === nextProps.loading &&
     prevProps.setLoading === nextProps.setLoading
-  );
-});
+);

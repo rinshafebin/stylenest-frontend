@@ -8,6 +8,8 @@ const SearchBar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // <- your .env variable
+
   // Fetch search suggestions (debounced)
   const fetchSearchResults = useCallback(async () => {
     const query = searchTerm.trim();
@@ -15,13 +17,13 @@ const SearchBar = () => {
 
     try {
       const res = await axios.get(
-        `https://web-production-777c7.up.railway.app/api/products/search/?q=${query}`
+        `${BACKEND_URL}/api/products/search/?q=${query}`
       );
       setSearchResults(Array.isArray(res.data.results) ? res.data.results : res.data);
     } catch (err) {
       console.error(err);
     }
-  }, [searchTerm]);
+  }, [searchTerm, BACKEND_URL]);
 
   useEffect(() => {
     const delay = setTimeout(fetchSearchResults, 300);

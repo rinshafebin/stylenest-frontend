@@ -5,6 +5,9 @@ import Header from "../../Components/Common/Admin/Header";
 import Sidebar from "../../Components/Common/Admin/Sidebar";
 import { Search } from "lucide-react";
 
+// Base URL from .env
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 // Memoized row component
 const OrderRow = React.memo(({ order, onEdit, formatCurrency, badgeClass }) => (
   <tr className="hover:bg-gray-50 even:bg-gray-50/50">
@@ -57,7 +60,7 @@ export default function AllOrders() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://web-production-777c7.up.railway.app/api/orders/admin-orders/");
+      const res = await axios.get(`${BASE_URL}/api/orders/admin-orders/`);
       setOrders(res.data);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -70,7 +73,7 @@ export default function AllOrders() {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Memoized filtered orders
+  // Filtered orders
   const filteredOrders = useMemo(
     () =>
       orders.filter(
@@ -83,7 +86,7 @@ export default function AllOrders() {
     [orders, searchTerm]
   );
 
-  // Memoized helpers
+  // Helpers
   const formatCurrency = useCallback((amount) => {
     if (!amount) return "₹0";
     return `₹${Number(amount).toLocaleString("en-IN")}`;
@@ -118,10 +121,13 @@ export default function AllOrders() {
     if (!editOrder) return;
     setSaving(true);
     try {
-      await axios.patch(`https://web-production-777c7.up.railway.app/api/orders/admin-orders/${editOrder.id}/`, {
-        order_status: editOrder.order_status,
-        payment_status: editOrder.payment_status,
-      });
+      await axios.patch(
+        `${BASE_URL}/api/orders/admin-orders/${editOrder.id}/`,
+        {
+          order_status: editOrder.order_status,
+          payment_status: editOrder.payment_status,
+        }
+      );
       await fetchOrders();
       setEditOrder(null);
     } catch (error) {

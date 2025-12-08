@@ -6,8 +6,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../context/AuthContext";
-import WishlistCard from './WishlistCard'
-import EmptyWishlist from './EmptyWishlist'
+import WishlistCard from "./WishlistCard";
+import EmptyWishlist from "./EmptyWishlist";
+
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const WishlistPage = () => {
   const { token } = useAuth();
@@ -21,7 +23,7 @@ const WishlistPage = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/cart/wishlist/",
+        `${BASE_URL}/api/cart/wishlist/`,
         { headers: { Authorization: `Bearer ${token.trim()}` } }
       );
 
@@ -44,23 +46,28 @@ const WishlistPage = () => {
     fetchWishlist();
   }, [fetchWishlist]);
 
-  const handleContinueShopping = useCallback(() => navigate("/products"), [navigate]);
+  const handleContinueShopping = useCallback(
+    () => navigate("/products"),
+    [navigate]
+  );
 
   const handleAddToCart = useCallback(
     async (productId, itemId) => {
       try {
         await axios.post(
-          "http://127.0.0.1:8000/api/cart/add/",
+          `${BASE_URL}/api/cart/add/`,
           { product_id: productId, quantity: 1 },
           { headers: { Authorization: `Bearer ${token.trim()}` } }
         );
 
         await axios.delete(
-          `http://127.0.0.1:8000/api/cart/wishlist/${itemId}/`,
+          `${BASE_URL}/api/cart/wishlist/${itemId}/`,
           { headers: { Authorization: `Bearer ${token.trim()}` } }
         );
 
-        setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
+        setWishlistItems((prev) =>
+          prev.filter((item) => item.id !== itemId)
+        );
         toast.success("Item added to cart!");
       } catch (error) {
         console.error(error);
@@ -74,11 +81,13 @@ const WishlistPage = () => {
     async (itemId) => {
       try {
         await axios.delete(
-          `http://127.0.0.1:8000/api/cart/wishlist/${itemId}/`,
+          `${BASE_URL}/api/cart/wishlist/${itemId}/`,
           { headers: { Authorization: `Bearer ${token.trim()}` } }
         );
 
-        setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
+        setWishlistItems((prev) =>
+          prev.filter((item) => item.id !== itemId)
+        );
         toast.success("Item removed from wishlist.");
       } catch (error) {
         console.error(error);
@@ -93,12 +102,12 @@ const WishlistPage = () => {
       const requests = wishlistItems.map((item) =>
         Promise.all([
           axios.post(
-            "http://127.0.0.1:8000/api/cart/add/",
+            `${BASE_URL}/api/cart/add/`,
             { product_id: item.product.id, quantity: 1 },
             { headers: { Authorization: `Bearer ${token.trim()}` } }
           ),
           axios.delete(
-            `http://127.0.0.1:8000/api/cart/wishlist/${item.id}/`,
+            `${BASE_URL}/api/cart/wishlist/${item.id}/`,
             { headers: { Authorization: `Bearer ${token.trim()}` } }
           ),
         ])
@@ -148,6 +157,7 @@ const WishlistPage = () => {
                 <ChevronLeft className="w-4 h-4 mr-2" />
                 Continue Shopping
               </button>
+
               {wishlistItems.length > 0 && (
                 <button
                   onClick={handleMoveAllToCart}

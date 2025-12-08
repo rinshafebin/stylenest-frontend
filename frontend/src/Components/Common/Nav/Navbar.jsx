@@ -16,7 +16,6 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // close mobile menu on route change
     setIsMobileMenuOpen(false);
   }, [location]);
 

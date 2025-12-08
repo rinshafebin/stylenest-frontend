@@ -9,6 +9,9 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Backend URL from environment
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -22,13 +25,13 @@ const ResetPassword = () => {
 
       const email = localStorage.getItem('resetEmail');
       if (!email) {
-        setMessage('Email not found in session. Please restart the reset process.');
+        setMessage('Email not found. Please restart the password reset process.');
         setLoading(false);
         return;
       }
 
       try {
-        const res = await axios.post('http://127.0.0.1:8000/api/users/reset-password/', {
+        const res = await axios.post(`${BASE_URL}/api/users/reset-password/`, {
           email,
           password: form.password,
           confirm_password: form.confirmPassword,
@@ -36,9 +39,9 @@ const ResetPassword = () => {
 
         setMessage(res.data.message || 'Password reset successful!');
         localStorage.removeItem('resetEmail');
+
         setTimeout(() => navigate('/login'), 1500);
       } catch (error) {
-        // Handle DRF errors
         if (error.response?.data?.password) {
           setMessage(error.response.data.password);
         } else if (error.response?.data?.confirm_password) {
@@ -46,13 +49,13 @@ const ResetPassword = () => {
         } else if (error.response?.data?.non_field_errors) {
           setMessage(error.response.data.non_field_errors[0]);
         } else {
-          setMessage('Password reset failed');
+          setMessage('Password reset failed. Try again.');
         }
       } finally {
         setLoading(false);
       }
     },
-    [form, navigate]
+    [form, navigate, BASE_URL]
   );
 
   return (
@@ -64,6 +67,7 @@ const ResetPassword = () => {
         <p className="text-sm text-gray-600 text-center mb-6">
           Enter your new password below.
         </p>
+
         <form onSubmit={handleResetPassword} className="space-y-5">
           <div className="relative">
             <Lock className="absolute top-3 left-3 text-rose-400" size={20} />
@@ -74,9 +78,11 @@ const ResetPassword = () => {
               onChange={handleInputChange}
               placeholder="New password"
               required
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg 
+                         focus:outline-none focus:ring-2 focus:ring-rose-400"
             />
           </div>
+
           <div className="relative">
             <Lock className="absolute top-3 left-3 text-rose-400" size={20} />
             <input
@@ -86,7 +92,8 @@ const ResetPassword = () => {
               onChange={handleInputChange}
               placeholder="Confirm password"
               required
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg 
+                         focus:outline-none focus:ring-2 focus:ring-rose-400"
             />
           </div>
 
@@ -94,16 +101,18 @@ const ResetPassword = () => {
             type="submit"
             disabled={loading}
             className="w-full flex justify-center items-center gap-2 
-                       bg-gradient-to-r from-pink-500 to-pink-600 
-                       text-white py-2 rounded-md 
-                       hover:from-pink-600 hover:to-pink-700 
+                       bg-gradient-to-r from-pink-500 to-pink-600 text-white 
+                       py-2 rounded-md hover:from-pink-600 hover:to-pink-700 
                        transition duration-300 disabled:opacity-50"
           >
-            {loading ? 'Resetting...' : 'Reset Password'} <CheckCircle2 size={18} />
+            {loading ? 'Resetting...' : 'Reset Password'} 
+            <CheckCircle2 size={18} />
           </button>
 
           {message && (
-            <p className="text-sm text-center text-rose-500 mt-2">{message}</p>
+            <p className="text-sm text-center text-rose-500 mt-2">
+              {message}
+            </p>
           )}
         </form>
       </div>

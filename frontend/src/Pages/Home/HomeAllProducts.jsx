@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios'; // normal axios
+import axios from 'axios';
 import ProductGrid from '../User/Products/ProductGrid';
 import Navbar from '../../Components/Common/Nav/Navbar';
 import Footer from '../../Components/Common/Footer';
@@ -9,9 +9,12 @@ export default function HomeAllProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Use your environment API URL
+  const API = import.meta.env.VITE_API_URL;
+
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/products/list'); 
+      const response = await axios.get(`${API}/products/list/`);
       setProducts(response.data.results || []);
       console.log('Fetched products:', response.data);
     } catch (error) {
@@ -20,7 +23,7 @@ export default function HomeAllProducts() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [API]);
 
   useEffect(() => {
     fetchProducts();
