@@ -95,6 +95,12 @@ export default function CartPage() {
           >
             Login
           </button>
+          <button
+            onClick={handleContinueShopping}
+            className="mt-3 text-rose-600 hover:text-pink-600"
+          >
+            Continue Shopping
+          </button>
         </div>
         <Footer />
       </>
