@@ -15,6 +15,7 @@ const WishlistPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Fetch wishlist from API
   const fetchWishlist = useCallback(async () => {
     if (!token) {
       setLoading(false);
@@ -47,6 +48,53 @@ const WishlistPage = () => {
   }, [fetchWishlist]);
 
   const handleContinueShopping = () => navigate("/products");
+
+  // Remove item from wishlist
+  const handleRemoveFromWishlist = async (id) => {
+    if (!token) return;
+    try {
+      await axios.delete(
+        `https://stylenest.up.railway.app/api/cart/wishlist/${id}/remove/`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setWishlistItems((prev) => prev.filter((item) => item.id !== id));
+      toast.success("Item removed from wishlist");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to remove item");
+    }
+  };
+
+  // Add item to cart and remove from wishlist
+  const handleAddToCart = async (productId, wishlistId) => {
+    if (!token) return;
+    try {
+      await axios.post(
+        `https://stylenest.up.railway.app/api/cart/wishlist/add/`,
+        { product_id: productId, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Added to cart");
+      handleRemoveFromWishlist(wishlistId);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add to cart");
+    }
+  };
+
+  // Move all wishlist items to cart
+  const handleMoveAllToCart = async () => {
+    if (!token) return;
+    try {
+      for (const item of wishlistItems) {
+        await handleAddToCart(item.product.id, item.id);
+      }
+      toast.success("All items moved to cart");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to move all items");
+    }
+  };
 
   if (loading) {
     return (
