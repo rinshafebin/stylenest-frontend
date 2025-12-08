@@ -28,7 +28,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
       // COD Orders
       if (selectedPayment === "cod") {
         alert("Order placed successfully!");
-        navigate(`/order/${res.data.order_id}`);
+        navigate(`/orders`);
         return;
       }
 
