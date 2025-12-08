@@ -1,12 +1,12 @@
 // src/pages/admin/orders/Orders.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import Header from '../../../Components/Common/Admin/Header'
+import Header from "../../../Components/Common/Admin/Header";
 import Sidebar from "../../../Components/Common/Admin/Sidebar";
 import { Search } from "lucide-react";
-
 import OrderTable from "./OrderTable";
 import EditOrderModal from "./EditOrderModal";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function AllOrders() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -16,16 +16,25 @@ export default function AllOrders() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const { token } = useAuth();
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`https://stylenest.up.railway.app/api/orders/admin-orders/`);
+      const res = await axios.get(
+        `https://stylenest.up.railway.app/api/orders/admin-orders/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setOrders(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load orders", err);
     }
     setLoading(false);
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetchOrders();
@@ -36,13 +45,12 @@ export default function AllOrders() {
     []
   );
 
-  const badgeClass = useCallback((status, type) => {
+  const badgeClass = useCallback((status) => {
     const s = status?.toLowerCase();
     const map = {
       paid: "bg-green-100 text-green-700",
       pending: "bg-yellow-100 text-yellow-700",
       failed: "bg-red-100 text-red-700",
-
       delivered: "bg-green-100 text-green-700",
       shipped: "bg-purple-100 text-purple-700",
       processing: "bg-blue-100 text-blue-700",
@@ -54,7 +62,7 @@ export default function AllOrders() {
 
   const handleSave = async (updatedOrder, triggerSave = false) => {
     if (!triggerSave) {
-      setEditOrder(updatedOrder); // only updating state, not saving yet
+      setEditOrder(updatedOrder);
       return;
     }
 
@@ -62,26 +70,32 @@ export default function AllOrders() {
     try {
       await axios.patch(
         `https://stylenest.up.railway.app/api/orders/admin-orders/${updatedOrder.id}/`,
-        updatedOrder
+        updatedOrder,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       await fetchOrders();
       setEditOrder(null);
-    } finally {
-      setSaving(false);
+    } catch (err) {
+      console.error("Failed to update order", err);
     }
+    setSaving(false);
   };
 
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar sidebarOpen={sidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         <main className="p-6">
           <div className="bg-white p-6 rounded-2xl border shadow-sm">
 
-            {/* Search */}
+            {/* Search Header */}
             <div className="flex justify-between mb-6">
               <h2 className="text-lg font-semibold">All Orders</h2>
 

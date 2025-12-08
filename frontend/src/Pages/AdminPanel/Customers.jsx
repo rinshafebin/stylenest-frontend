@@ -1,10 +1,11 @@
 // src/pages/admin/Customers.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios"; 
+import axios from "axios";
 import Header from "../../Components/Common/Admin/Header";
 import Sidebar from "../../Components/Common/Admin/Sidebar";
 import { Search } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Customers() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -12,11 +13,20 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { token } = useAuth(); // ✅ Get token
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(`https://stylenest.up.railway.app/api/users/admin/users/`); 
+        const res = await axios.get(
+          `https://stylenest.up.railway.app/api/users/admin/users/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Token added
+            },
+          }
+        );
+
         setCustomers(res.data);
       } catch (error) {
         console.error(error);
@@ -25,8 +35,9 @@ export default function Customers() {
         setLoading(false);
       }
     };
-    fetchCustomers();
-  }, []); 
+
+    if (token) fetchCustomers();
+  }, [token]);
 
   // Only filter when searchTerm changes
   const filteredCustomers = React.useMemo(() => {
@@ -48,6 +59,7 @@ export default function Customers() {
           <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-black">All Customers</h2>
+
               <div className="relative">
                 <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -72,34 +84,43 @@ export default function Customers() {
                     <th className="px-6 py-3 font-medium">Status</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {!loading && filteredCustomers.map((customer) => (
-                    <tr
-                      key={customer.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
-                    >
-                      <td className="px-6 py-4 font-medium text-black">{customer.username}</td>
-                      <td className="px-6 py-4">{customer.email}</td>
-                      <td className="px-6 py-4">{customer.date_joined}</td>
-                      <td className="px-6 py-4">{customer.phone_number}</td>
-                      <td className="px-6 py-4">{customer.orders}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            customer.status === "Active"
-                              ? "bg-green-100 text-green-600"
-                              : "bg-red-100 text-red-600"
-                          }`}
-                        >
-                          {customer.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {!loading &&
+                    filteredCustomers.map((customer) => (
+                      <tr
+                        key={customer.id}
+                        className="border-b border-gray-100 hover:bg-gray-50"
+                      >
+                        <td className="px-6 py-4 font-medium text-black">
+                          {customer.username}
+                        </td>
+
+                        <td className="px-6 py-4">{customer.email}</td>
+                        <td className="px-6 py-4">{customer.date_joined}</td>
+                        <td className="px-6 py-4">{customer.phone_number}</td>
+                        <td className="px-6 py-4">{customer.orders}</td>
+
+                        <td className="px-6 py-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              customer.status === "Active"
+                                ? "bg-green-100 text-green-600"
+                                : "bg-red-100 text-red-600"
+                            }`}
+                          >
+                            {customer.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
 
                   {!loading && filteredCustomers.length === 0 && (
                     <tr>
-                      <td colSpan="6" className="px-6 py-4 text-center text-gray-400">
+                      <td
+                        colSpan="6"
+                        className="px-6 py-4 text-center text-gray-400"
+                      >
                         No customers found.
                       </td>
                     </tr>
@@ -107,7 +128,10 @@ export default function Customers() {
 
                   {loading && (
                     <tr>
-                      <td colSpan="6" className="px-6 py-4 text-center text-gray-400">
+                      <td
+                        colSpan="6"
+                        className="px-6 py-4 text-center text-gray-400"
+                      >
                         Loading customers...
                       </td>
                     </tr>
@@ -115,6 +139,7 @@ export default function Customers() {
                 </tbody>
               </table>
             </div>
+
           </div>
         </main>
       </div>
