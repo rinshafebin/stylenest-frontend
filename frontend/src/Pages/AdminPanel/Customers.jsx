@@ -26,7 +26,7 @@ export default function Customers() {
       }
     };
     fetchCustomers();
-  }, [BACKEND_URL]); 
+  }, []); 
 
   // Only filter when searchTerm changes
   const filteredCustomers = React.useMemo(() => {
