@@ -9,10 +9,15 @@ export default function HomeAllProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/products/list/`);
+      const url = BACKEND_URL.endsWith('/')
+        ? `${BACKEND_URL}api/products/list/`
+        : `${BACKEND_URL}/api/products/list/`;
+
+      const response = await axios.get(url);
       setProducts(response.data.results || []);
       console.log('Fetched products:', response.data);
     } catch (error) {
@@ -21,7 +26,7 @@ export default function HomeAllProducts() {
     } finally {
       setLoading(false);
     }
-  }, [API]);
+  }, [BACKEND_URL]); // ✅ fixed dependency
 
   useEffect(() => {
     fetchProducts();
