@@ -52,7 +52,7 @@ export default function AllProducts() {
           },
         }
       );
-      setProducts(products.filter((p) => p.id !== id)); // remove deleted product
+      setProducts(products.filter((p) => p.id !== id));
     } catch (err) {
       console.error(err);
       alert(
@@ -140,7 +140,7 @@ export default function AllProducts() {
                       <td className="px-6 py-4">
                         {product.image ? (
                           <img
-                            src={product.image.startsWith("http") ? product.image : `${BACKEND_URL}${product.image}`}
+                            src={product.image.startsWith("http") ? product.image : `https://stylenest.up.railway.app${product.image}`}
                             alt={product.name}
                             className="w-16 h-16 object-cover rounded"
                           />
