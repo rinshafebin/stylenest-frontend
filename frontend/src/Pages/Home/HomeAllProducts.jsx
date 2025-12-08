@@ -9,7 +9,6 @@ export default function HomeAllProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ;
   const fetchProducts = useCallback(async () => {
     try {
       const response = await axios.get(`https://stylenest.up.railway.app/api/products/list/`);
@@ -21,7 +20,7 @@ export default function HomeAllProducts() {
     } finally {
       setLoading(false);
     }
-  }, [API]);
+  }, []);
 
   useEffect(() => {
     fetchProducts();
