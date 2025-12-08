@@ -13,16 +13,12 @@ export default function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(null);
   const { token } = useAuth();
 
-  // Environment backend URL
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
 
-  // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          `${BACKEND_URL}/api/products/${id}/`
-        );
+        const response = await axios.get(`${BACKEND_URL}/api/products/${id}/`);
         setProduct(response.data);
       } catch (error) {
         console.error("Failed to fetch product:", error);
@@ -32,14 +28,9 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id, BACKEND_URL]);
 
-  // Add to Cart
   const handleAddToCart = async () => {
     if (!product) return;
-
-    if (!token) {
-      toast.error("You need to be logged in to add to cart.");
-      return;
-    }
+    if (!token) return toast.error("You need to be logged in to add to cart.");
 
     try {
       await axios.post(
@@ -53,14 +44,9 @@ export default function ProductDetails() {
     }
   };
 
-  // Add to Wishlist
   const handleAddToWishlist = async () => {
     if (!product) return;
-
-    if (!token) {
-      toast.error("You need to be logged in to use wishlist.");
-      return;
-    }
+    if (!token) return toast.error("You need to be logged in to use wishlist.");
 
     try {
       await axios.post(
@@ -84,9 +70,8 @@ export default function ProductDetails() {
     );
   }
 
-  // Image URL fix
   const imageUrl = product.image
-    ? `${BACKEND_URL}${product.image.startsWith("/") ? "" : "/"}${product.image}`
+    ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
     : "https://via.placeholder.com/500x500?text=No+Image";
 
   return (
@@ -135,7 +120,6 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-
 
       <Footer />
     </div>

@@ -9,13 +9,13 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth();
 
-  const API = import.meta.env.VITE_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const imageUrl = useMemo(() => {
     return product.image
-      ? `${API}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+      ? `${BACKEND_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
       : 'https://via.placeholder.com/300x300?text=No+Image';
-  }, [product.image, API]);
+  }, [product.image, BACKEND_URL]);
 
   const handleAddToCart = useCallback(async () => {
     if (!token) {
@@ -25,7 +25,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
     try {
       await axios.post(
-        `${API}/cart/add/`,
+        `${BACKEND_URL}/api/cart/add/`,
         { product_id: product.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -33,7 +33,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     } catch (error) {
       toast.error('Something went wrong adding to cart.');
     }
-  }, [product.id, token, API]);
+  }, [product.id, token, BACKEND_URL]);
 
   const handleAddToWishlist = useCallback(async () => {
     if (!token) {
@@ -43,7 +43,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
     try {
       await axios.post(
-        `${API}/cart/wishlist/add/`,
+        `${BACKEND_URL}/api/cart/wishlist/add/`,
         { product_id: product.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -52,7 +52,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     } catch (error) {
       toast.error('Something went wrong adding to wishlist.');
     }
-  }, [product.id, token, API]);
+  }, [product.id, token, BACKEND_URL]);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition duration-300 flex flex-col">
