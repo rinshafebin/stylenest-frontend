@@ -12,7 +12,7 @@ export default function AllProducts() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("access_token"); 
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -22,37 +22,27 @@ export default function AllProducts() {
       try {
         const res = await axios.get(
           `https://stylenest.up.railway.app/api/products/admin/all/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setProducts(res.data);
       } catch (err) {
         console.error(err);
-        setError(
-          err?.response?.data?.detail || err.message || "Failed to load products"
-        );
+        setError(err?.response?.data?.detail || err.message || "Failed to load products");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [token]);
+  }, [token]); 
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
-
     try {
       await axios.delete(
         `https://stylenest.up.railway.app/api/products/admin/delete/${id}/`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setProducts(products.filter((p) => p.id !== id));
     } catch (err) {
       console.error(err);
@@ -96,11 +86,7 @@ export default function AllProducts() {
           </div>
 
           {loading && <div className="text-gray-500 italic">Loading products...</div>}
-          {error && (
-            <div className="bg-red-100 text-red-600 px-4 py-2 rounded mb-4">
-              {error}
-            </div>
-          )}
+          {error && <div className="bg-red-100 text-red-600 px-4 py-2 rounded mb-4">{error}</div>}
 
           {!loading && filteredProducts.length === 0 && !error && (
             <div className="bg-white shadow rounded-lg p-6 text-center">
@@ -128,7 +114,6 @@ export default function AllProducts() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {filteredProducts.map((product, idx) => (
                     <tr
@@ -136,11 +121,10 @@ export default function AllProducts() {
                       className={`border-b ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100`}
                     >
                       <td className="px-6 py-4 text-sm text-gray-700">{product.id}</td>
-
                       <td className="px-6 py-4">
                         {product.image ? (
                           <img
-                            src={product.image}
+                            src={product.image.includes('.avif') ? product.image.replace(/\.avif$/, '.jpg') : product.image}
                             alt={product.name}
                             className="w-16 h-16 object-cover rounded"
                           />
@@ -148,18 +132,14 @@ export default function AllProducts() {
                           <span className="text-gray-400 italic">No image</span>
                         )}
                       </td>
-
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">{product.name}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{product.category}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">₹{product.price}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{product.stock}</td>
-
                       <td className="px-6 py-4 text-sm">
                         <div className="flex items-center gap-3">
                           <Link to={`/editproduct/${product.id}/`}>
-                            <button className="text-blue-500 hover:text-blue-700">
-                              <Edit size={18} />
-                            </button>
+                            <button className="text-blue-500 hover:text-blue-700"><Edit size={18} /></button>
                           </Link>
                           <button
                             className="text-red-500 hover:text-red-700"
@@ -169,15 +149,12 @@ export default function AllProducts() {
                           </button>
                         </div>
                       </td>
-
                     </tr>
                   ))}
                 </tbody>
-
               </table>
             </div>
           )}
-
         </main>
       </div>
     </div>

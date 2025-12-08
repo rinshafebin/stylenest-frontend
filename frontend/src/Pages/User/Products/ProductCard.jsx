@@ -11,7 +11,9 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
   // Cloudinary-compatible image URL
   const imageUrl = product.image
-    ? product.image
+    ? product.image.includes('.avif')
+      ? product.image.replace(/\.avif$/, '.jpg') // fallback to jpg if avif not supported
+      : product.image
     : 'https://via.placeholder.com/300x300?text=No+Image';
 
   // Add to cart
@@ -27,7 +29,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success('Product added to cart');
-    } catch (error) {
+    } catch {
       toast.error('Something went wrong adding to cart.');
     }
   }, [product.id, token]);
@@ -46,7 +48,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
       );
       setIsWishlisted(true);
       toast.success('Product added to wishlist!');
-    } catch (error) {
+    } catch {
       toast.error('Something went wrong adding to wishlist.');
     }
   }, [product.id, token]);
