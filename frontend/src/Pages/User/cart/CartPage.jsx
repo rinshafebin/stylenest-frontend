@@ -15,10 +15,7 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (token) fetchCart();
-  }, [token]);
-
+  // Fetch cart from API
   const fetchCart = async () => {
     try {
       const res = await axios.get(
@@ -32,6 +29,11 @@ export default function CartPage() {
     }
   };
 
+  useEffect(() => {
+    if (token) fetchCart();
+  }, [token]);
+
+  // Handle quantity change
   const handleQuantityChange = async (id, action) => {
     const updated = [...cartItems];
     const index = updated.findIndex((i) => i.id === id);
@@ -58,6 +60,7 @@ export default function CartPage() {
     }
   };
 
+  // Handle remove item
   const handleRemove = async (id) => {
     const updated = cartItems.filter((i) => i.id !== id);
     setCartItems(updated);
@@ -73,20 +76,28 @@ export default function CartPage() {
     }
   };
 
+  // Navigate to checkout
   const handleCheckout = () => {
     navigate("/checkout");
   };
 
+  // Navigate to home/shop
+  const handleContinueShopping = () => {
+    navigate("/");
+  };
+
+  // Calculate totals
   const { totalPrice, totalItems } = useMemo(() => {
     const price = cartItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
     const count = cartItems.reduce((sum, i) => sum + i.quantity, 0);
     return { totalPrice: price, totalItems: count };
   }, [cartItems]);
 
-  if (!token) {
-    return (
-      <>
-        <Navbar />
+  return (
+    <>
+      <Navbar />
+
+      {!token ? (
         <div className="min-h-screen flex flex-col items-center justify-center">
           <p>Please login to view your cart</p>
           <button
@@ -102,46 +113,38 @@ export default function CartPage() {
             Continue Shopping
           </button>
         </div>
-        <Footer />
-      </>
-    );
-  }
+      ) : (
+        <section className="py-12 min-h-screen bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* LEFT SIDE - Items */}
+            <div className="lg:col-span-2 space-y-5">
+              {cartItems.length === 0 ? (
+                <EmptyCart />
+              ) : (
+                cartItems.map((item) => (
+                  <CartItem
+                    key={item.id}
+                    item={item}
+                    apiBaseUrl="https://stylenest.up.railway.app"
+                    onQtyChange={handleQuantityChange}
+                    onRemove={handleRemove}
+                  />
+                ))
+              )}
+            </div>
 
-  return (
-    <>
-      <Navbar />
-      <section className="py-12 min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* LEFT SIDE - Items */}
-          <div className="lg:col-span-2 space-y-5">
-            {cartItems.length === 0 ? (
-              <EmptyCart />
-            ) : (
-              cartItems.map((item) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  // pass full URL for CartItem if it needs API calls
-                  apiBaseUrl="https://stylenest.up.railway.app"
-                  onQtyChange={handleQuantityChange}
-                  onRemove={handleRemove}
-                  onCheckout={handleCheckout}
-                />
-              ))
+            {/* RIGHT SIDE - Summary */}
+            {cartItems.length > 0 && (
+              <OrderSummary
+                totalPrice={totalPrice}
+                totalItems={totalItems}
+                onCheckout={handleCheckout}
+              />
             )}
           </div>
+        </section>
+      )}
 
-          {/* RIGHT SIDE */}
-          {cartItems.length > 0 && (
-            <OrderSummary
-              totalPrice={totalPrice}
-              totalItems={totalItems}
-              onCheckout={handleCheckout}
-            />
-          )}
-        </div>
-      </section>
       <Footer />
     </>
   );
