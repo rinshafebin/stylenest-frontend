@@ -47,7 +47,7 @@ export default function ChangePasswordPage() {
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong');
         }
-    }, [oldPassword, newPassword, token, BACKEND_URL]);
+    }, [oldPassword, newPassword, token]);
 
     const toggleOldPassword = useCallback(() => setShowOldPassword(prev => !prev), []);
     const toggleNewPassword = useCallback(() => setShowNewPassword(prev => !prev), []);
