@@ -65,7 +65,7 @@ export const Login = () => {
         setLoading(false);
       }
     },
-    [email, password, login, navigate, API_URL]
+    [email, password, login, navigate]
   );
 
   const togglePassword = useCallback(() => {

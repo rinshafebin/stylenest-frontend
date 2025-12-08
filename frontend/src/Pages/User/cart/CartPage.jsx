@@ -15,7 +15,6 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch cart items
   useEffect(() => {
     if (token) fetchCart();
   }, [token]);
