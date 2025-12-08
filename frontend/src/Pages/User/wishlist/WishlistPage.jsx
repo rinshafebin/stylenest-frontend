@@ -18,7 +18,10 @@ const WishlistPage = () => {
   const navigate = useNavigate();
 
   const fetchWishlist = useCallback(async () => {
-    if (!token) return navigate("/login");
+    if (!token) {
+      setLoading(false); // Stop loading if not logged in
+      return;
+    }
 
     setLoading(true);
     try {
@@ -30,103 +33,52 @@ const WishlistPage = () => {
       if (response.data && Array.isArray(response.data.wishlist)) {
         setWishlistItems(response.data.wishlist);
       } else {
-        console.warn("Wishlist API did not return an array:", response.data);
         setWishlistItems([]);
       }
     } catch (error) {
-      console.error("Error fetching wishlist:", error);
+      console.error(error);
       setWishlistItems([]);
       toast.error("Failed to load wishlist.");
     } finally {
       setLoading(false);
     }
-  }, [token, navigate]);
+  }, [token]);
 
   useEffect(() => {
     fetchWishlist();
   }, [fetchWishlist]);
 
-  const handleContinueShopping = useCallback(
-    () => navigate("/products"),
-    [navigate]
-  );
-
-  const handleAddToCart = useCallback(
-    async (productId, itemId) => {
-      try {
-        await axios.post(
-          `${BASE_URL}/api/cart/add/`,
-          { product_id: productId, quantity: 1 },
-          { headers: { Authorization: `Bearer ${token.trim()}` } }
-        );
-
-        await axios.delete(
-          `${BASE_URL}/api/cart/wishlist/${itemId}/`,
-          { headers: { Authorization: `Bearer ${token.trim()}` } }
-        );
-
-        setWishlistItems((prev) =>
-          prev.filter((item) => item.id !== itemId)
-        );
-        toast.success("Item added to cart!");
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to add item to cart.");
-      }
-    },
-    [token]
-  );
-
-  const handleRemoveFromWishlist = useCallback(
-    async (itemId) => {
-      try {
-        await axios.delete(
-          `${BASE_URL}/api/cart/wishlist/${itemId}/`,
-          { headers: { Authorization: `Bearer ${token.trim()}` } }
-        );
-
-        setWishlistItems((prev) =>
-          prev.filter((item) => item.id !== itemId)
-        );
-        toast.success("Item removed from wishlist.");
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to remove item.");
-      }
-    },
-    [token]
-  );
-
-  const handleMoveAllToCart = useCallback(async () => {
-    try {
-      const requests = wishlistItems.map((item) =>
-        Promise.all([
-          axios.post(
-            `${BASE_URL}/api/cart/add/`,
-            { product_id: item.product.id, quantity: 1 },
-            { headers: { Authorization: `Bearer ${token.trim()}` } }
-          ),
-          axios.delete(
-            `${BASE_URL}/api/cart/wishlist/${item.id}/`,
-            { headers: { Authorization: `Bearer ${token.trim()}` } }
-          ),
-        ])
-      );
-
-      await Promise.all(requests);
-      setWishlistItems([]);
-      toast.success("All items moved to cart!");
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to move all items.");
-    }
-  }, [wishlistItems, token]);
+  const handleContinueShopping = () => navigate("/products");
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-500">Loading wishlist...</p>
       </div>
+    );
+  }
+
+  if (!token) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen flex flex-col items-center justify-center">
+          <p className="text-gray-700 mb-4">Please login to view your wishlist</p>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-rose-500 text-white px-6 py-2 rounded-md"
+          >
+            Login
+          </button>
+          <button
+            onClick={handleContinueShopping}
+            className="mt-3 text-rose-600 hover:text-pink-600"
+          >
+            Continue Shopping
+          </button>
+        </div>
+        <Footer />
+      </>
     );
   }
 
@@ -148,7 +100,6 @@ const WishlistPage = () => {
                 />
               ))}
             </div>
-
             <div className="mt-12 flex justify-between items-center">
               <button
                 onClick={handleContinueShopping}
@@ -157,7 +108,6 @@ const WishlistPage = () => {
                 <ChevronLeft className="w-4 h-4 mr-2" />
                 Continue Shopping
               </button>
-
               {wishlistItems.length > 0 && (
                 <button
                   onClick={handleMoveAllToCart}
@@ -175,5 +125,3 @@ const WishlistPage = () => {
     </div>
   );
 };
-
-export default WishlistPage;

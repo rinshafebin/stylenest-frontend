@@ -19,10 +19,8 @@ export default function RegisterPage() {
 
   const [error, setError] = useState('');
 
-  // Load backend URL from .env
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-  // Memoized input handler
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
