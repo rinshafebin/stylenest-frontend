@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from '../../../context/AuthContext'
 
 import ProductBasicFields from "./ProductBasicFields";
 import ProductDetailsInput from "./ProductDetailsInput";
