@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-
-export const OrderRow = React.memo(function OrderRow({ order, onEdit, formatCurrency, badgeClass }) {
+// OrderRow.jsx
+const OrderRow = React.memo(function OrderRow({ order, onEdit, formatCurrency, badgeClass }) {
   return (
     <tr className="hover:bg-gray-50 even:bg-gray-50/50">
       <td className="px-6 py-4 font-medium text-black">{order.id}</td>
@@ -30,3 +29,5 @@ export const OrderRow = React.memo(function OrderRow({ order, onEdit, formatCurr
     </tr>
   );
 });
+
+export default OrderRow;
