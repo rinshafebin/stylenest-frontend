@@ -2,7 +2,6 @@ import React from 'react'
 import Login from './Pages/Auth/Login'
 import Register from './Pages/Auth/Register'
 import Homepage from './Pages/Home/HomePage'
-import Logout from './Pages/Auth/Logout'
 import ChangePassword from './Pages/Auth/ChangePassword'
 import CartPage from './Pages/User/cart/CartPage'
 import WishlistPage from './Pages/User/wishlist/WishlistPage'
@@ -55,7 +54,6 @@ function App() {
             <Route path='/forgetpassword' element={<ForgetPassword />} />
             <Route path='/verifyotp' element={<Verifyotp />} />
             <Route path='/resetpassword' element={<ResetPassword />} />
-            <Route path='/logout' element={<Logout />} />
 
             {/* Admin */}
             <Route path='/adminpanel' element={<AdminDashboard />} />

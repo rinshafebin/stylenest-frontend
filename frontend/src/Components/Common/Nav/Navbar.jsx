@@ -6,10 +6,10 @@ import SearchBar from "./SearchBar";
 import UserMenu from "./UserMenu";
 import CartWishlistButtons from "./CartWishlistButtons";
 import { Menu, X } from "lucide-react";
-import { useAuth } from "../../../context/AuthContext";  
+import { useAuth } from "../../../context/AuthContext";
 
 const Navbar = () => {
-  const { user, cartCount } = useAuth();            
+  const { user, cartCount, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -27,26 +27,33 @@ const Navbar = () => {
     [navigate]
   );
 
-  const handleLogout = useCallback(() => navigate("/logout"), [navigate]);
+  // Logout handler using AuthContext
+  const handleLogout = useCallback(() => {
+    logout();          
+    navigate("/");     
+  }, [logout, navigate]);
+
   const handleLogin = useCallback(() => navigate("/login"), [navigate]);
 
   return (
     <header className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         
+        {/* Logo */}
         <Logo />
 
+        {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center space-x-8">
           <NavLinks handleNavigate={handleNavigate} />
         </nav>
 
+        {/* Desktop Right Section */}
         <div className="hidden lg:flex items-center space-x-3">
           <SearchBar />
 
-          {/* ✅ Passing cartCount from context */}
           <CartWishlistButtons 
             handleNavigate={handleNavigate} 
-            cartCount={cartCount}
+            cartCount={cartCount} 
           />
 
           <UserMenu
@@ -57,8 +64,9 @@ const Navbar = () => {
           />
         </div>
 
+        {/* Mobile Menu Toggle */}
         <button 
-          className="lg:hidden text-black" 
+          className="lg:hidden text-black"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? (
@@ -68,6 +76,35 @@ const Navbar = () => {
           )}
         </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-200 shadow-md">
+          <div className="flex flex-col px-4 py-2 space-y-3">
+            <NavLinks handleNavigate={handleNavigate} />
+            <SearchBar />
+            <CartWishlistButtons 
+              handleNavigate={handleNavigate} 
+              cartCount={cartCount} 
+            />
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-left text-red-500 font-medium py-2"
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="w-full text-left text-rose-500 font-medium py-2"
+              >
+                Login
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };
