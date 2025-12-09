@@ -6,24 +6,35 @@ import axios from "axios";
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; 
 
   const fetchSearchResults = useCallback(async () => {
     const query = searchTerm.trim();
-    if (!query) return setSearchResults([]);
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
 
+    setLoading(true);
     try {
       const res = await axios.get(
-        `https://stylenest.up.railway.app/api/products/search/?q=${query}`
+        `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(query)}`
       );
-      setSearchResults(Array.isArray(res.data.results) ? res.data.results : res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [searchTerm, BACKEND_URL]);
 
+      console.log("Search API response:", res.data);
+
+      const data = Array.isArray(res.data.results) ? res.data.results : res.data;
+      setSearchResults(data);
+    } catch (err) {
+      console.error("Search API error:", err.response?.data || err.message);
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm]);
+
+  // Debounce search
   useEffect(() => {
     const delay = setTimeout(fetchSearchResults, 300);
     return () => clearTimeout(delay);
@@ -33,7 +44,7 @@ const SearchBar = () => {
     e.preventDefault();
     const query = searchTerm.trim();
     if (!query) return;
-    navigate(`/search?query=${query}`);
+    navigate(`/search?q=${query}`);
     setSearchResults([]);
   };
 
@@ -55,14 +66,23 @@ const SearchBar = () => {
         </button>
       </form>
 
+      {loading && <p className="text-gray-500 mt-1 text-sm">Loading...</p>}
+
       {searchResults.length > 0 && (
         <ul className="absolute top-full mt-2 left-0 bg-white border border-rose-200 rounded-md shadow-lg w-full max-w-xs max-h-60 overflow-y-auto z-50">
           {searchResults.map((product) => (
             <li
               key={product.id}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2 text-sm"
               onClick={() => navigate(`/products/${product.id}`)}
             >
+              {product.image && (
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-6 h-6 object-cover rounded"
+                />
+              )}
               {product.name}
             </li>
           ))}
