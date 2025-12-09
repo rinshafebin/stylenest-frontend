@@ -54,7 +54,7 @@ const WishlistPage = () => {
     if (!token) return;
     try {
       await axios.delete(
-        `https://stylenest.up.railway.app/api/cart/wishlist/${id}/remove/`,
+        `https://stylenest.up.railway.app/api/cart/wishlist/${id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWishlistItems((prev) => prev.filter((item) => item.id !== id));
@@ -98,7 +98,7 @@ const WishlistPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="text-gray-500">Loading wishlist...</p>
       </div>
     );
@@ -108,17 +108,19 @@ const WishlistPage = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen flex flex-col items-center justify-center">
-          <p className="text-gray-700 mb-4">Please login to view your wishlist</p>
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50">
+          <p className="text-gray-700 mb-4 text-center">
+            Please login to view your wishlist
+          </p>
           <button
             onClick={() => navigate("/login")}
-            className="bg-rose-500 text-white px-6 py-2 rounded-md"
+            className="bg-rose-500 text-white px-6 py-2 rounded-md mb-3 w-full sm:w-auto"
           >
             Login
           </button>
           <button
             onClick={handleContinueShopping}
-            className="mt-3 text-rose-600 hover:text-pink-600"
+            className="text-rose-600 hover:text-pink-600"
           >
             Continue Shopping
           </button>
@@ -131,7 +133,7 @@ const WishlistPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
         {wishlistItems.length === 0 ? (
           <EmptyWishlist onContinueShopping={handleContinueShopping} />
         ) : (
@@ -146,7 +148,8 @@ const WishlistPage = () => {
                 />
               ))}
             </div>
-            <div className="mt-12 flex justify-between items-center">
+
+            <div className="mt-12 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
               <button
                 onClick={handleContinueShopping}
                 className="text-rose-600 hover:text-pink-600 flex items-center"
@@ -157,7 +160,7 @@ const WishlistPage = () => {
               {wishlistItems.length > 0 && (
                 <button
                   onClick={handleMoveAllToCart}
-                  className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-2 rounded-lg hover:opacity-90 flex items-center gap-2"
+                  className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-2 rounded-lg hover:opacity-90 flex items-center gap-2 w-full sm:w-auto justify-center"
                 >
                   <ShoppingBag className="w-5 h-5" />
                   Move All to Cart

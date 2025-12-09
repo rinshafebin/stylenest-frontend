@@ -52,12 +52,12 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-3 sm:p-4 hover:shadow-lg transition duration-300 flex flex-col">
-      <div className="relative">
+      <div className="relative w-full">
         <Link to={`/productdetails/${product.id}`}>
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-60 sm:h-72 md:h-80 object-cover rounded-xl"
+            className="w-full aspect-square sm:aspect-[4/3] md:aspect-[3/2] object-contain rounded-xl"
           />
         </Link>
 

@@ -22,4 +22,5 @@ function ProductGrid({ products }) {
   );
 }
 
+
 export default React.memo(ProductGrid);

@@ -38,14 +38,9 @@ export default function CheckoutPage() {
         if (res.data.addresses.length > 0) {
           setSelectedAddressId(res.data.addresses[0].id); 
         }
-      } else {
-        console.warn("No addresses array found in response:", res.data);
       }
     } catch (err) {
-      console.error(
-        "Error fetching shipping addresses:",
-        err.response?.data || err.message
-      );
+      console.error("Error fetching shipping addresses:", err.response?.data || err.message);
       alert(
         err.response?.status === 401
           ? "Unauthorized. Please login again."
@@ -65,7 +60,7 @@ export default function CheckoutPage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen flex justify-center items-center">
+        <div className="min-h-screen flex justify-center items-center bg-gray-50">
           <p className="text-gray-600">Loading shipping addresses...</p>
         </div>
         <Footer />
@@ -78,17 +73,17 @@ export default function CheckoutPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-4">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 sm:py-16 px-4">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
 
           {/* LEFT: Shipping Addresses */}
-          <div className="md:col-span-2 space-y-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <div className="md:col-span-2 space-y-4 sm:space-y-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
               📍 Select Shipping Address
             </h2>
 
             {addresses.length === 0 ? (
-              <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md text-center">
                 <p className="text-gray-600">No saved addresses found.</p>
                 <button
                   className="mt-4 text-rose-500 font-medium hover:underline"
@@ -101,21 +96,21 @@ export default function CheckoutPage() {
               addresses.map((addr) => (
                 <div
                   key={addr.id}
-                  className={`border p-4 rounded-lg cursor-pointer transition ${
+                  className={`border p-3 sm:p-4 rounded-lg cursor-pointer transition ${
                     selectedAddressId === addr.id
                       ? "border-rose-500 bg-rose-50 shadow-md"
                       : "border-gray-200 hover:border-gray-400"
                   }`}
                   onClick={() => setSelectedAddressId(addr.id)}
                 >
-                  <p className="font-semibold">
+                  <p className="font-semibold text-sm sm:text-base">
                     {addr.address_line1} {addr.address_line2}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-gray-500 text-xs sm:text-sm">
                     {addr.city}, {addr.state} - {addr.zip_code}
                   </p>
-                  <p className="text-sm text-gray-500">{addr.country}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-gray-500 text-xs sm:text-sm">{addr.country}</p>
+                  <p className="text-gray-500 text-xs sm:text-sm">
                     Phone: {addr.phone_number}
                   </p>
                 </div>
@@ -123,7 +118,7 @@ export default function CheckoutPage() {
             )}
 
             <button
-              className="mt-4 text-rose-500 font-medium hover:underline"
+              className="mt-3 text-rose-500 font-medium hover:underline"
               onClick={() => navigate("/shippingaddress")}
             >
               + Add New Address
@@ -131,7 +126,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* RIGHT: Payment & Place Order */}
-          <div className="space-y-6">
+          <div className="space-y-6 mt-6 md:mt-0">
             <PaymentOptions
               selectedPayment={selectedPayment}
               setSelectedPayment={setSelectedPayment}
