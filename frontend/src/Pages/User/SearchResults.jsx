@@ -28,10 +28,10 @@ const SearchResults = () => {
         );
       }
 
-      // Handle paginated vs non-paginated responses
-      const data = response.data.results ?? response.data ?? [];
-      setResults(data);
-      console.log('Fetched products:', data);
+    const data = response.data.results ?? [];
+    setResults(data);
+    console.log('Fetched products:', data);
+    
     } catch (error) {
       console.error('Search error:', error.response?.data || error.message);
       setResults([]);
