@@ -1,63 +1,111 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import axios from "axios";
-import ProductCard from "../../Pages/User/Products/ProductCard";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import ProductCard from '../../Pages/User/Products/ProductCard';
 
 const SearchResults = () => {
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const location = useLocation();
-
+  
   // Get search term from URL
-  const searchTerm = new URLSearchParams(location.search).get("q") || "";
+  const searchTerm = new URLSearchParams(location.search).get('query') || '';
+
+  const fetchResults = useCallback(async () => {
+    if (!searchTerm.trim()) {
+      setResults([]);
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log('Searching for:', searchTerm); // Debug log
+      
+      const response = await axios.get(
+        `https://stylenest.up.railway.app/api/products/search/`,
+        {
+          params: { q: searchTerm },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000, // 10 second timeout
+        }
+      );
+
+      console.log('API Response:', response.data); // Debug log
+
+      // Handle the response structure from your backend
+      const data = response.data.results || [];
+      setResults(data);
+      
+      if (data.length === 0) {
+        setError('No products found for your search.');
+      }
+    } catch (err) {
+      console.error('Search error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+      });
+
+      // Set user-friendly error messages
+      if (err.code === 'ECONNABORTED') {
+        setError('Request timeout. Please try again.');
+      } else if (err.response?.status === 404) {
+        setError('Search endpoint not found.');
+      } else if (err.response?.status >= 500) {
+        setError('Server error. Please try again later.');
+      } else if (err.message === 'Network Error') {
+        setError('Network error. Please check your connection or CORS settings.');
+      } else {
+        setError('An error occurred while searching. Please try again.');
+      }
+      
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
-    const fetchResults = async () => {
-      if (!searchTerm.trim()) {
-        setResults([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const res = await axios.get(
-          `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(
-            searchTerm
-          )}`
-        );
-
-        console.log("Fetched products:", res.data);
-
-        const data = Array.isArray(res.data.results) ? res.data.results : res.data;
-        setResults(data);
-      } catch (error) {
-        console.error("Search fetch error:", error.response?.data || error.message);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchResults();
-  }, [searchTerm]);
+  }, [fetchResults]);
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-lg font-bold mb-4">
-        {searchTerm ? `Search Results for "${searchTerm}"` : "Explore the latest collection"}
+        Search Results for "{searchTerm}"
       </h1>
 
-      {loading ? (
-        <p className="text-gray-500">Loading products...</p>
-      ) : results.length > 0 ? (
+      {loading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <span className="ml-3 text-gray-600">Searching...</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && results.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {results.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-      ) : (
-        <p className="text-center text-gray-500 col-span-full">No products available.</p>
+      )}
+
+      {!loading && !error && results.length === 0 && searchTerm && (
+        <p className="text-gray-500 text-center py-8">
+          No products found for "{searchTerm}". Try a different search term.
+        </p>
       )}
     </div>
   );
