@@ -51,13 +51,14 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   }, [product.id, token]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-3 sm:p-4 hover:shadow-lg transition duration-300 flex flex-col">
-      <div className="relative w-full">
-        <Link to={`/productdetails/${product.id}`}>
+    <div className="bg-white rounded-2xl shadow-md p-3 sm:p-4 hover:shadow-lg transition duration-300 flex flex-col h-full">
+      {/* Image */}
+      <div className="relative w-full flex-1">
+        <Link to={`/productdetails/${product.id}`} className="block h-full w-full">
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full aspect-square sm:aspect-[4/3] md:aspect-[3/2] object-contain rounded-xl"
+            className="w-full h-full object-cover rounded-xl"
           />
         </Link>
 
@@ -72,6 +73,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
         </button>
       </div>
 
+      {/* Details */}
       <div className="mt-3 flex-1 flex flex-col justify-between">
         <Link to={`/productdetails/${product.id}`}>
           <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 truncate">
