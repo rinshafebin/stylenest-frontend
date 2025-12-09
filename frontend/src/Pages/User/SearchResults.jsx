@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ProductCard from '../../Pages/User/Products/ProductCard';
@@ -8,41 +8,45 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
-  // Get search term from URL
+  // Extract search term from URL
   const searchTerm = new URLSearchParams(location.search).get('query') || '';
 
-  const fetchResults = useCallback(async () => {
-    setLoading(true);
-    try {
-      let response;
-
-      if (!searchTerm.trim()) {
-        // If search is empty, fetch latest 8 products as fallback
-        response = await axios.get(
-          'https://stylenest.up.railway.app/api/products/latest/?limit=8'
-        );
-      } else {
-        // Fetch search results
-        response = await axios.get(
-          `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(searchTerm)}`
-        );
-      }
-
-    const data = response.data.results ?? [];
-    setResults(data);
-    console.log('Fetched products:', data);
-    
-    } catch (error) {
-      console.error('Search error:', error.response?.data || error.message);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [searchTerm]);
-
   useEffect(() => {
+    console.log('SearchResults component mounted');
+    console.log('Search term:', searchTerm);
+
+    const fetchResults = async () => {
+      setLoading(true);
+      try {
+        let url;
+        if (!searchTerm.trim()) {
+          console.log('No search term provided, fetching latest products...');
+          url = 'https://stylenest.up.railway.app/api/products/latest/?limit=10';
+        } else {
+          console.log('Fetching search results...');
+          url = `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(searchTerm)}`;
+        }
+
+        const response = await axios.get(url);
+        console.log('API response:', response.data);
+
+        // Handle both paginated ({ results: [] }) and plain array responses
+        const data = Array.isArray(response.data)
+          ? response.data
+          : response.data.results ?? [];
+        console.log('Processed results:', data);
+
+        setResults(data);
+      } catch (error) {
+        console.error('Error fetching products:', error.response?.data || error.message);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchResults();
-  }, [fetchResults]);
+  }, [searchTerm]);
 
   return (
     <div className="container mx-auto p-4">
@@ -56,9 +60,9 @@ const SearchResults = () => {
         <p className="text-gray-500">Loading products...</p>
       ) : results.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {results.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {results.map((product, index) =>
+            product ? <ProductCard key={product.id || index} product={product} /> : null
+          )}
         </div>
       ) : (
         <p className="text-gray-500">No products available.</p>
