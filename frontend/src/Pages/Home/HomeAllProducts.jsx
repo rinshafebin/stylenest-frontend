@@ -13,7 +13,6 @@ export default function HomeAllProducts() {
     try {
       const response = await axios.get(`https://stylenest.up.railway.app/api/products/list/`);
       setProducts(response.data.results || []);
-      console.log('Fetched products:', response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast.error('Failed to load products. Please try again later.');
