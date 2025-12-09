@@ -8,32 +8,25 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
-  // Extract search term from URL
   const searchTerm = new URLSearchParams(location.search).get('query') || '';
 
   useEffect(() => {
-    console.log('SearchResults component mounted');
-    console.log('Search term:', searchTerm);
-
     const fetchResults = async () => {
       setLoading(true);
       try {
-        let url;
-        if (!searchTerm.trim()) {
-          console.log('No search term provided, fetching latest products...');
-          url = 'https://stylenest.up.railway.app/api/products/latest/?limit=10';
-        } else {
-          console.log('Fetching search results...');
-          url = `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(searchTerm)}`;
-        }
+        const url = searchTerm
+          ? `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(searchTerm)}`
+          : `https://stylenest.up.railway.app/api/products/latest/?limit=10`;
 
         const response = await axios.get(url);
         console.log('API response:', response.data);
 
-        // Handle both paginated ({ results: [] }) and plain array responses
         const data = Array.isArray(response.data)
           ? response.data
-          : response.data.results ?? [];
+          : Array.isArray(response.data.results)
+          ? response.data.results
+          : [];
+
         console.log('Processed results:', data);
 
         setResults(data);
@@ -51,21 +44,19 @@ const SearchResults = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-lg font-bold mb-4">
-        {searchTerm
-          ? `Search Results for "${searchTerm}"`
-          : 'Explore the latest collection'}
+        {searchTerm ? `Search Results for "${searchTerm}"` : 'Explore the latest collection'}
       </h1>
 
       {loading ? (
         <p className="text-gray-500">Loading products...</p>
       ) : results.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {results.map((product, index) =>
-            product ? <ProductCard key={product.id || index} product={product} /> : null
-          )}
+          {results.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
       ) : (
-        <p className="text-gray-500">No products available.</p>
+        <p className="text-center col-span-full mt-10 text-gray-500">No products available.</p>
       )}
     </div>
   );
