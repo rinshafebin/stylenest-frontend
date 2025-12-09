@@ -84,8 +84,10 @@ export default function ProductDetails() {
   }
 
   const imageUrl = product.image
-  ? `https://stylenest.up.railway.app/media/${product.image.replace(/^\/+/, "")}`
-  : "https://via.placeholder.com/500x500?text=No+Image";
+    ? product.image.includes('.avif')
+      ? product.image.replace(/\.avif$/, '.jpg') 
+      : product.image
+    : 'https://via.placeholder.com/300x300?text=No+Image';
 
 
   return (
