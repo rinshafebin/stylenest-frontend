@@ -7,6 +7,7 @@ const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
+
   const fetchSearchResults = useCallback(async () => {
     const query = searchTerm.trim();
     if (!query) return setSearchResults([]);
@@ -58,7 +59,7 @@ const SearchBar = () => {
             <li
               key={product.id}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-              onClick={() => navigate(`/products/${product.id}`)}
+              onClick={() => navigate(`/productdetails/${product.id}/`)}
             >
               {product.name}
             </li>
