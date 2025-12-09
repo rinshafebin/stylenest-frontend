@@ -10,36 +10,36 @@ const SearchResults = () => {
 
   const searchTerm = new URLSearchParams(location.search).get('query') || '';
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true);
-      try {
-        const url = searchTerm
-          ? `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(searchTerm)}`
-          : `https://stylenest.up.railway.app/api/products/latest/?limit=10`;
+useEffect(() => {
+  const fetchResults = async () => {
+    setLoading(true);
+    try {
+      const url = searchTerm
+        ? `https://stylenest.up.railway.app/api/products/search/?q=${encodeURIComponent(searchTerm)}`
+        : `https://stylenest.up.railway.app/api/products/latest/?limit=10`;
 
-        const response = await axios.get(url);
-        console.log('API response:', response.data);
+      const response = await axios.get(url);
 
-        const data = Array.isArray(response.data)
-          ? response.data
-          : Array.isArray(response.data.results)
-          ? response.data.results
-          : [];
+      console.log('API response:', response.data); // ✅ log the raw response
 
-        console.log('Processed results:', data);
+      const data = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data.results)
+        ? response.data.results
+        : [];
 
-        setResults(data);
-      } catch (error) {
-        console.error('Error fetching products:', error.response?.data || error.message);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+      console.log('Processed results:', data); // ✅ log the array you’ll map
+      setResults(data);
+    } catch (error) {
+      console.error('Error fetching products:', error.response?.data || error.message);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchResults();
-  }, [searchTerm]);
+  fetchResults();
+}, [searchTerm]);
 
   return (
     <div className="container mx-auto p-4">
