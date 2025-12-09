@@ -83,10 +83,10 @@ export default function ProductDetails() {
     );
   }
 
-  // Image URL fix
   const imageUrl = product.image
-    ? `https://stylenest.up.railway.app${product.image.startsWith("/") ? "" : "/"}${product.image}`
-    : "https://via.placeholder.com/500x500?text=No+Image";
+  ? `https://stylenest.up.railway.app/media/${product.image.replace(/^\/+/, "")}`
+  : "https://via.placeholder.com/500x500?text=No+Image";
+
 
   return (
     <div className="bg-white min-h-screen">

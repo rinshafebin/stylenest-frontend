@@ -60,7 +60,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-80 object-cover rounded-xl"
+            className="w-full h-85 object-cover rounded-xl"
           />
         </Link>
 
