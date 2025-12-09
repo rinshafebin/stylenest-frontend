@@ -57,15 +57,10 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     <div className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition duration-300 flex flex-col">
       <div className="relative">
         <Link to={`/productdetails/${product.id}`}>
-          {/* <img
+          <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-85 object-cover rounded-xl"
-          /> */}
-            <img
-            src={imageUrl}
-            alt={product.name}
-            className="rounded-2xl shadow-lg max-h-[500px] object-contain bg-white p-4"
+            className="w-full h-90 object-cover rounded-xl"
           />
         </Link>
         
