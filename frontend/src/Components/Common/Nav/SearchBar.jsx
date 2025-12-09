@@ -36,29 +36,29 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full sm:w-auto">
       <form
         onSubmit={handleSubmit}
-        className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-1 shadow-sm w-fit"
+        className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-1 shadow-sm w-full sm:w-auto"
       >
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for products..."
-          className="bg-transparent text-sm text-gray-800 placeholder-gray-400 focus:outline-none px-1 py-1 w-40 md:w-64"
+          className="bg-transparent text-sm sm:text-base text-gray-800 placeholder-gray-400 focus:outline-none px-2 py-1 w-full sm:w-40 md:w-64"
         />
-        <button type="submit" className="ml-1">
-          <Search className="w-5 h-5 text-gray-600 hover:text-rose-600" />
+        <button type="submit" className="ml-1 p-1 rounded-full hover:bg-gray-100 transition">
+          <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 hover:text-rose-600" />
         </button>
       </form>
 
       {searchResults.length > 0 && (
-        <ul className="absolute top-full mt-2 left-0 bg-white border border-rose-200 rounded-md shadow-lg w-full max-w-xs max-h-60 overflow-y-auto z-50">
+        <ul className="absolute top-full mt-2 left-0 bg-white border border-rose-200 rounded-md shadow-lg w-full sm:max-w-xs max-h-60 overflow-y-auto z-50">
           {searchResults.map((product) => (
             <li
               key={product.id}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm sm:text-base"
               onClick={() => navigate(`/productdetails/${product.id}/`)}
             >
               {product.name}

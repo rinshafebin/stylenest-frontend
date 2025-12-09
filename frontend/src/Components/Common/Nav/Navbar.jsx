@@ -27,28 +27,27 @@ const Navbar = () => {
     [navigate]
   );
 
-  // Logout handler using AuthContext
   const handleLogout = useCallback(() => {
-    logout();          
-    navigate("/");     
+    logout();
+    navigate("/");
   }, [logout, navigate]);
 
   const handleLogin = useCallback(() => navigate("/login"), [navigate]);
 
   return (
     <header className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
         
         {/* Logo */}
         <Logo />
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center space-x-8">
+        <nav className="hidden lg:flex items-center space-x-6 lg:space-x-8">
           <NavLinks handleNavigate={handleNavigate} />
         </nav>
 
         {/* Desktop Right Section */}
-        <div className="hidden lg:flex items-center space-x-3">
+        <div className="hidden lg:flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
           <SearchBar />
 
           <CartWishlistButtons 
@@ -66,7 +65,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Toggle */}
         <button 
-          className="lg:hidden text-black"
+          className="lg:hidden text-black focus:outline-none p-2 rounded-md hover:bg-gray-100 transition"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? (
@@ -78,33 +77,35 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-200 shadow-md">
-          <div className="flex flex-col px-4 py-2 space-y-3">
-            <NavLinks handleNavigate={handleNavigate} />
-            <SearchBar />
-            <CartWishlistButtons 
-              handleNavigate={handleNavigate} 
-              cartCount={cartCount} 
-            />
-            {user ? (
-              <button
-                onClick={handleLogout}
-                className="w-full text-left text-red-500 font-medium py-2"
-              >
-                Logout
-              </button>
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="w-full text-left text-rose-500 font-medium py-2"
-              >
-                Login
-              </button>
-            )}
-          </div>
+      <div
+        className={`lg:hidden bg-white border-t border-gray-200 shadow-md transition-max-height duration-300 ease-in-out overflow-hidden ${
+          isMobileMenuOpen ? "max-h-screen" : "max-h-0"
+        }`}
+      >
+        <div className="flex flex-col px-4 py-3 space-y-3 sm:space-y-4">
+          <NavLinks handleNavigate={handleNavigate} />
+          <SearchBar />
+          <CartWishlistButtons 
+            handleNavigate={handleNavigate} 
+            cartCount={cartCount} 
+          />
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="w-full text-left text-red-500 font-medium py-2 hover:bg-gray-50 rounded-md transition"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="w-full text-left text-rose-500 font-medium py-2 hover:bg-gray-50 rounded-md transition"
+            >
+              Login
+            </button>
+          )}
         </div>
-      )}
+      </div>
     </header>
   );
 };
