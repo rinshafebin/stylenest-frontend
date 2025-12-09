@@ -13,7 +13,6 @@ export default function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(null);
   const { token } = useAuth();
 
-  // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -29,15 +28,12 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  // Add to Cart
   const handleAddToCart = async () => {
     if (!product) return;
-
     if (!token) {
       toast.error("You need to be logged in to add to cart.");
       return;
     }
-
     try {
       await axios.post(
         `https://stylenest.up.railway.app/api/cart/add/`,
@@ -51,15 +47,12 @@ export default function ProductDetails() {
     }
   };
 
-  // Add to Wishlist
   const handleAddToWishlist = async () => {
     if (!product) return;
-
     if (!token) {
       toast.error("You need to be logged in to use wishlist.");
       return;
     }
-
     try {
       await axios.post(
         `https://stylenest.up.railway.app/api/cart/wishlist/add/`,
@@ -89,49 +82,48 @@ export default function ProductDetails() {
       : product.image
     : 'https://via.placeholder.com/300x300?text=No+Image';
 
-
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen flex flex-col">
       <Navbar />
 
-      <div className="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
         <div className="flex justify-center">
           <img
             src={imageUrl}
             alt={product.name}
-            className="rounded-2xl shadow-lg max-h-[500px] object-contain bg-white p-4"
+            className="rounded-2xl shadow-lg w-full max-w-md sm:max-w-lg md:max-w-full object-contain bg-white p-4"
           />
         </div>
 
         <div className="flex flex-col justify-center">
-          <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl font-bold text-gray-800">{product.name}</h1>
 
-          <div className="flex items-center mt-4 space-x-2">
-            <span className="text-yellow-500 text-xl">★</span>
-            <span className="text-gray-600">
+          <div className="flex items-center mt-3 sm:mt-4 space-x-2">
+            <span className="text-yellow-500 text-lg sm:text-xl">★</span>
+            <span className="text-gray-600 text-sm sm:text-base">
               {product.rating || 0} / 5 ({product.reviews || 0} Reviews)
             </span>
           </div>
 
-          <span className="text-3xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent mt-4">
+          <span className="text-2xl sm:text-3xl md:text-3xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent mt-4 block">
             ₹{product.price}
           </span>
 
-          <p className="text-gray-600 mt-6 leading-relaxed">{product.description}</p>
+          <p className="text-gray-600 mt-4 sm:mt-6 leading-relaxed text-sm sm:text-base">{product.description}</p>
 
-          <div className="flex items-center space-x-4 mt-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 mt-6 sm:mt-8">
             <button
               onClick={handleAddToCart}
-              className="flex items-center bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-3 rounded-xl hover:opacity-90 transition shadow-lg"
+              className="flex items-center justify-center w-full sm:w-auto bg-gradient-to-r from-rose-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:opacity-90 transition shadow-lg"
             >
-              <ShoppingBag className="mr-2" /> Add to Cart
+              <ShoppingBag className="mr-2 w-4 h-4 sm:w-5 sm:h-5" /> Add to Cart
             </button>
 
             <button
               onClick={handleAddToWishlist}
-              className="p-3 border-2 border-rose-500 text-rose-600 rounded-xl hover:bg-rose-100 transition"
+              className="flex items-center justify-center w-full sm:w-auto p-2 sm:p-3 border-2 border-rose-500 text-rose-600 rounded-xl hover:bg-rose-100 transition"
             >
-              <Heart />
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>

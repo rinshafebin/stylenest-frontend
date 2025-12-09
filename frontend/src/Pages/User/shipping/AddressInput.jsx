@@ -2,11 +2,11 @@ import React from "react";
 
 function AddressInput({ icon, label, name, value, onChange, error, full }) {
   return (
-    <div className={`${full ? "md:col-span-2" : ""}`}>
+    <div className={`${full ? "md:col-span-2 w-full" : "w-full"} mb-4`}>
       <label className="text-sm font-medium text-gray-700 mb-1 block">{label}</label>
 
       <div className="flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden">
-        <span className="px-3 bg-gray-50 border-r border-gray-200 text-gray-400 flex items-center">
+        <span className="px-3 bg-gray-50 border-r border-gray-200 text-gray-400 flex items-center justify-center">
           {React.cloneElement(icon, { className: "w-5 h-5" })}
         </span>
         <input

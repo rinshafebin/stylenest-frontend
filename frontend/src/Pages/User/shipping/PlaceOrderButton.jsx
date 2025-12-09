@@ -88,8 +88,10 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
     <button
       onClick={handlePlaceOrder}
       disabled={loading}
-      className={`w-full py-3 px-6 rounded-xl text-white font-semibold transition ${
-        loading ? "bg-gray-400 cursor-not-allowed" : "bg-rose-500 hover:bg-rose-600"
+      className={`w-full sm:w-auto py-3 px-6 rounded-xl text-white font-semibold transition-all duration-200 ${
+        loading
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-rose-500 hover:bg-rose-600"
       }`}
     >
       {loading ? "Placing Order..." : "Place Order"}

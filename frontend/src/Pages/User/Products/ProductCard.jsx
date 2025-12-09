@@ -9,14 +9,12 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth();
 
-  // Cloudinary-compatible image URL
   const imageUrl = product.image
     ? product.image.includes('.avif')
-      ? product.image.replace(/\.avif$/, '.jpg') // fallback to jpg if avif not supported
+      ? product.image.replace(/\.avif$/, '.jpg')
       : product.image
     : 'https://via.placeholder.com/300x300?text=No+Image';
 
-  // Add to cart
   const handleAddToCart = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to add to cart.');
@@ -34,7 +32,6 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     }
   }, [product.id, token]);
 
-  // Add to wishlist
   const handleAddToWishlist = useCallback(async () => {
     if (!token) {
       toast.error('You need to be logged in to use wishlist.');
@@ -54,20 +51,19 @@ export default function ProductCard({ product, initialWishlisted = false }) {
   }, [product.id, token]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition duration-300 flex flex-col">
+    <div className="bg-white rounded-2xl shadow-md p-3 sm:p-4 hover:shadow-lg transition duration-300 flex flex-col">
       <div className="relative">
         <Link to={`/productdetails/${product.id}`}>
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-90 object-cover rounded-xl"
+            className="w-full h-60 sm:h-72 md:h-80 object-cover rounded-xl"
           />
         </Link>
-        
 
         <button
           onClick={handleAddToWishlist}
-          className="absolute top-2 right-2 bg-white p-2 rounded-full shadow hover:bg-pink-100"
+          className="absolute top-2 right-2 bg-white p-2 sm:p-2.5 rounded-full shadow hover:bg-pink-100"
         >
           <Heart
             size={20}
@@ -78,24 +74,26 @@ export default function ProductCard({ product, initialWishlisted = false }) {
 
       <div className="mt-3 flex-1 flex flex-col justify-between">
         <Link to={`/productdetails/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
+          <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 truncate">
+            {product.name}
+          </h3>
         </Link>
 
         <div className="flex items-center gap-1 mt-1">
           <Star size={16} className="text-yellow-400 fill-yellow-400" />
-          <span className="text-sm text-gray-600">{product.rating || 0}</span>
+          <span className="text-xs sm:text-sm text-gray-600">{product.rating || 0}</span>
         </div>
 
         <div className="flex justify-between items-center mt-3">
           <Link to={`/productdetails/${product.id}`}>
-            <span className="text-lg font-extrabold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
+            <span className="text-base sm:text-lg md:text-xl font-extrabold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
               ₹{product.price}
             </span>
           </Link>
 
           <button
             onClick={handleAddToCart}
-            className="flex items-center bg-gradient-to-r from-rose-500 to-pink-500 text-white text-sm px-3 py-2 rounded-lg hover:opacity-90 shadow-md transition"
+            className="flex items-center bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg hover:opacity-90 shadow-md transition"
           >
             <ShoppingBag size={14} className="mr-1" /> Add to cart
           </button>

@@ -11,7 +11,7 @@ const StatusBadge = React.memo(({ status }) => {
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
+      className={`inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-semibold border ${
         statusStyles[status] || 'bg-gray-100 text-gray-800 border-gray-200'
       }`}
     >

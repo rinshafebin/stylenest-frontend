@@ -2,13 +2,7 @@ import React, { useCallback } from "react";
 import { User, Home, MapPin, Globe, Phone } from "lucide-react";
 import AddressInput from "./AddressInput";
 
-function AddressForm({
-  formData,
-  setFormData,
-  errors,
-  saving,
-  handleSubmit,
-}) {
+function AddressForm({ formData, setFormData, errors, saving, handleSubmit }) {
   // Memoized change handler
   const handleChange = useCallback(
     (e) => {
@@ -19,10 +13,10 @@ function AddressForm({
   );
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
       <AddressInput
         icon={<User />}
-        label="Full Name "
+        label="Full Name"
         name="address_line1"
         value={formData.address_line1}
         onChange={handleChange}
@@ -79,11 +73,11 @@ function AddressForm({
         error={errors.phone_number}
       />
 
-      <div className="md:col-span-2 mt-4">
+      <div className="sm:col-span-2 mt-4">
         <button
           type="submit"
           disabled={saving}
-          className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition ${
+          className={`w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold py-2.5 sm:py-3 rounded-lg shadow-md hover:shadow-lg transition ${
             saving ? "opacity-70 cursor-not-allowed" : ""
           }`}
         >

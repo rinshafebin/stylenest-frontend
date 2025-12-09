@@ -91,10 +91,10 @@ export default function ShippingAddressForm() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 py-12 px-4 flex justify-center">
-        <div className="max-w-2xl w-full bg-white rounded-2xl p-8 shadow-md">
-          <h2 className="text-3xl font-bold flex items-center gap-3 mb-8 text-gray-800">
-            <MapPin className="text-rose-500" /> Shipping Address
+      <div className="min-h-screen bg-gray-100 py-8 sm:py-12 px-4 sm:px-6 flex justify-center">
+        <div className="max-w-full sm:max-w-2xl w-full bg-white rounded-2xl p-6 sm:p-8 shadow-md">
+          <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 text-gray-800">
+            <MapPin className="text-rose-500 w-5 h-5 sm:w-6 sm:h-6" /> Shipping Address
           </h2>
 
           <AddressForm {...formProps} />

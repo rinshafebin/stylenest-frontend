@@ -25,15 +25,17 @@ function PaymentOptions({ selectedPayment, setSelectedPayment }) {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6">
+    <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 w-full">
       <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">💳 Payment Options</h2>
       <div className="space-y-4">
         {paymentMethods.map((method) => (
           <div
             key={method.id}
             onClick={() => handleSelect(method.id)}
-            className={`border rounded-xl p-4 cursor-pointer flex items-center gap-4 transition-all duration-200 ${
-              selectedPayment === method.id ? "border-rose-500 bg-rose-50 shadow-md" : "border-gray-200 hover:border-gray-400"
+            className={`border rounded-xl p-4 cursor-pointer flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 transition-all duration-200 ${
+              selectedPayment === method.id
+                ? "border-rose-500 bg-rose-50 shadow-md"
+                : "border-gray-200 hover:border-gray-400"
             }`}
           >
             {method.icon}
@@ -49,6 +51,8 @@ function PaymentOptions({ selectedPayment, setSelectedPayment }) {
 }
 
 export default React.memo(PaymentOptions, (prevProps, nextProps) => {
-  return prevProps.selectedPayment === nextProps.selectedPayment &&
-         prevProps.setSelectedPayment === nextProps.setSelectedPayment;
+  return (
+    prevProps.selectedPayment === nextProps.selectedPayment &&
+    prevProps.setSelectedPayment === nextProps.setSelectedPayment
+  );
 });
