@@ -7,9 +7,6 @@ const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
-
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; 
-
   const fetchSearchResults = useCallback(async () => {
     const query = searchTerm.trim();
     if (!query) return setSearchResults([]);
@@ -22,7 +19,7 @@ const SearchBar = () => {
     } catch (err) {
       console.error(err);
     }
-  }, [searchTerm, BACKEND_URL]);
+  }, [searchTerm]);
 
   useEffect(() => {
     const delay = setTimeout(fetchSearchResults, 300);
