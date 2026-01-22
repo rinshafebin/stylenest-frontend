@@ -12,12 +12,13 @@ export default function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const { token } = useAuth();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `https://stylenest.up.railway.app/api/products/${id}/`
+          `${BACKEND_URL}/api/products/${id}/`
         );
         setProduct(response.data);
       } catch (error) {
@@ -36,7 +37,7 @@ export default function ProductDetails() {
     }
     try {
       await axios.post(
-        `https://stylenest.up.railway.app/api/cart/add/`,
+        `${BACKEND_URL}/api/cart/add/`,
         { product_id: product.id, quantity: 1, size: selectedSize || null },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -55,7 +56,7 @@ export default function ProductDetails() {
     }
     try {
       await axios.post(
-        `https://stylenest.up.railway.app/api/cart/wishlist/add/`,
+        `${BACKEND_URL}/api/cart/wishlist/add/`,
         { product_id: product.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -12,17 +12,18 @@ export default function Customers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-  const { token } = useAuth(); // ✅ Get token
+  const { token } = useAuth(); 
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const res = await axios.get(
-          `https://stylenest.up.railway.app/api/users/admin/users/`,
+          `${BACKEND_URL}/api/users/admin/users/`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // ✅ Token added
+              Authorization: `Bearer ${token}`, 
             },
           }
         );

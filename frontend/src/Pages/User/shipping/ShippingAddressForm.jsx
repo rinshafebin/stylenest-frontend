@@ -13,6 +13,7 @@ import AddressLoader from './AddressLoader';
 export default function ShippingAddressForm() {
   const navigate = useNavigate();
   const { token } = useAuth();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const [formData, setFormData] = useState({
     address_line1: "",
@@ -34,7 +35,7 @@ export default function ShippingAddressForm() {
 
     try {
       const res = await axios.get(
-        `https://stylenest.up.railway.app/api/orders/shipping-address/`,
+        `${BACKEND_URL}/api/orders/shipping-address/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.data) setFormData(res.data);
@@ -58,7 +59,7 @@ export default function ShippingAddressForm() {
 
       try {
         await axios.post(
-          `https://stylenest.up.railway.app/api/orders/shipping-address/`,
+          `${BACKEND_URL}/api/orders/shipping-address/`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );

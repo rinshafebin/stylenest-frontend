@@ -11,6 +11,7 @@ export default function EditProduct() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { id } = useParams();
   const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,7 +27,7 @@ export default function EditProduct() {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`https://stylenest.up.railway.app/api/products/admin/update/${id}/`);
+        const res = await axios.get(`${BACKEND_URL}/api/products/admin/update/${id}/`);
         setFormData({
           name: res.data.name || "",
           category: res.data.category || "",

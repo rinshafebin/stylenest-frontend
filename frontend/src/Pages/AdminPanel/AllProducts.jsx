@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 
 export default function AllProducts() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,7 +22,7 @@ export default function AllProducts() {
 
       try {
         const res = await axios.get(
-          `https://stylenest.up.railway.app/api/products/admin/all/`,
+          `${BACKEND_URL}/api/products/admin/all/`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setProducts(res.data);
@@ -40,7 +41,7 @@ export default function AllProducts() {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await axios.delete(
-        `https://stylenest.up.railway.app/api/products/admin/delete/${id}/`,
+        `${BACKEND_URL}/api/products/admin/delete/${id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setProducts(products.filter((p) => p.id !== id));

@@ -2,6 +2,7 @@ import { Trash2 } from "lucide-react";
 import React from "react";
 
 export default function CartItem({ item, onQtyChange, onRemove, onCheckout }) {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   return (
     <div className="flex flex-col sm:flex-row bg-white rounded-xl shadow overflow-hidden mb-6">
       {/* Product Image */}
@@ -10,7 +11,7 @@ export default function CartItem({ item, onQtyChange, onRemove, onCheckout }) {
           src={
             item.product.image?.startsWith("http")
               ? item.product.image
-              : `https://stylenest.up.railway.app${item.product.image}`
+              : `${BACKEND_URL}${item.product.image}`
           }
           className="w-full h-full object-cover"
         />

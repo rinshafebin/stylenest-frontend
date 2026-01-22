@@ -1,9 +1,10 @@
 import React from "react";
 
 const WishlistCard = React.memo(({ item, onAddToCart, onRemove }) => {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const imageUrl = item.product.image.startsWith("http")
     ? item.product.image
-    : `https://stylenest.up.railway.app${item.product.image.startsWith('/') ? '' : '/'}${item.product.image}`;
+    : `${BACKEND_URL}${item.product.image.startsWith('/') ? '' : '/'}${item.product.image}`;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow group w-full sm:max-w-xs mx-auto">

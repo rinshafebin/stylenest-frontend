@@ -8,10 +8,11 @@ import toast from 'react-hot-toast';
 export default function HomeAllProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get(`https://stylenest.up.railway.app/api/products/list/`);
+      const response = await axios.get(`${BACKEND_URL}/api/products/list/`);
       setProducts(response.data.results || []);
     } catch (error) {
       console.error('Error fetching products:', error);

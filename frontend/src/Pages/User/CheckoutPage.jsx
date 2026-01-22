@@ -10,6 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 export default function CheckoutPage() {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -27,7 +28,7 @@ export default function CheckoutPage() {
 
     try {
       const res = await axios.get(
-        `https://stylenest.up.railway.app/api/orders/shipping-address/`,
+        `${BACKEND_URL}/api/orders/shipping-address/`,
         {
           headers: { Authorization: `Bearer ${trimmedToken}` },
         }

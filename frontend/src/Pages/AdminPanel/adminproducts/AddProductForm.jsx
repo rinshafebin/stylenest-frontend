@@ -8,6 +8,7 @@ import ProductDetailsInput from "./ProductDetailsInput";
 
 export default function AddProductForm() {
   const { token } = useAuth();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,7 +17,7 @@ export default function AddProductForm() {
     category: "women",
     description: "",
     details: [],
-    image_url: "",  // Cloudinary URL only
+    image_url: "",  
   });
 
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,7 @@ export default function AddProductForm() {
 
       try {
         await axios.post(
-          "https://stylenest.up.railway.app/api/products/admin/create/",
+          `${BACKEND_URL}/api/products/admin/create/`,
           data,
           {
             headers: {

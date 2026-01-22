@@ -8,6 +8,7 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const location = useLocation();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   
   // Get search term from URL
   const searchTerm = new URLSearchParams(location.search).get('query') || '';
@@ -26,7 +27,7 @@ const SearchResults = () => {
       console.log('Searching for:', searchTerm); // Debug log
       
       const response = await axios.get(
-        `https://stylenest.up.railway.app/api/products/search/`,
+        `${BACKEND_URL}/api/products/search/`,
         {
           params: { q: searchTerm },
           headers: {

@@ -9,6 +9,7 @@ import EditOrderModal from "./EditOrderModal";
 import { useAuth } from "../../../context/AuthContext";
 
 export default function AllOrders() {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [orders, setOrders] = useState([]);
@@ -22,7 +23,7 @@ export default function AllOrders() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://stylenest.up.railway.app/api/orders/admin-orders/`,
+        `${BACKEND_URL}/api/orders/admin-orders/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +70,7 @@ export default function AllOrders() {
     setSaving(true);
     try {
       await axios.patch(
-        `https://stylenest.up.railway.app/api/orders/admin-orders/${updatedOrder.id}/`,
+        `${BACKEND_URL}/api/orders/admin-orders/${updatedOrder.id}/`,
         updatedOrder,
         {
           headers: {

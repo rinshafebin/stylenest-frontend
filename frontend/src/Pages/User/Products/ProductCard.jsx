@@ -8,6 +8,7 @@ import { useAuth } from '../../../context/AuthContext';
 export default function ProductCard({ product, initialWishlisted = false }) {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const { token } = useAuth();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const imageUrl = product.image
     ? product.image.includes('.avif')
@@ -22,7 +23,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     }
     try {
       await axios.post(
-        `https://stylenest.up.railway.app/api/cart/add/`,
+        `${BACKEND_URL}/api/cart/add/`,
         { product_id: product.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -39,7 +40,7 @@ export default function ProductCard({ product, initialWishlisted = false }) {
     }
     try {
       await axios.post(
-        `https://stylenest.up.railway.app/api/cart/wishlist/add/`,
+        `${BACKEND_URL}/api/cart/wishlist/add/`,
         { product_id: product.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );

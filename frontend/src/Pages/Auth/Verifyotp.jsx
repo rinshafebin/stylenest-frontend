@@ -8,6 +8,7 @@ const VerifyOtp = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
   const handleChange = useCallback((e) => {
@@ -28,7 +29,7 @@ const VerifyOtp = () => {
       }
 
       try {
-        const res = await axios.post(`https://stylenest.up.railway.app/api/users/verify-otp/`, {
+        const res = await axios.post(`${BACKEND_URL}/api/users/verify-otp/`, {
           email,
           otp,
         });

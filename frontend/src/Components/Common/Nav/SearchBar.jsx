@@ -9,12 +9,13 @@ const SearchBar = () => {
   const navigate = useNavigate();
 
   const fetchSearchResults = useCallback(async () => {
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const query = searchTerm.trim();
     if (!query) return setSearchResults([]);
 
     try {
       const res = await axios.get(
-        `https://stylenest.up.railway.app/api/products/search/?q=${query}`
+        `${BACKEND_URL}/api/products/search/?q=${query}`
       );
       setSearchResults(Array.isArray(res.data.results) ? res.data.results : res.data);
     } catch (err) {

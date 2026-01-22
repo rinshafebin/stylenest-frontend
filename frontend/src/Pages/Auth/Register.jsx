@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -41,7 +41,7 @@ export default function RegisterPage() {
 
       try {
         const res = await axios.post(
-          `https://stylenest.up.railway.app/api/users/register/`,
+          `${BACKEND_URL}/api/users/register/`,
           {
             username: formData.username,
             email: formData.email,

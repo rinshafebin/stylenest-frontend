@@ -8,11 +8,12 @@ import Footer from "../../Components/Common/Footer";
 export default function CategoryProducts() {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchCategoryProducts = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://stylenest.up.railway.app/api/products/category/${category}`
+        `${BACKEND_URL}/api/products/category/${category}`
       );
       setProducts(response.data);
     } catch (error) {

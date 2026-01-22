@@ -14,11 +14,12 @@ export default function CartPage() {
   const { token } = useAuth();
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchCart = async () => {
     try {
       const res = await axios.get(
-        `https://stylenest.up.railway.app/api/cart/list/`,
+        `${BACKEND_URL}/api/cart/list/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCartItems(res.data.cart_items || []);
@@ -47,7 +48,7 @@ export default function CartPage() {
 
     try {
       await axios.patch(
-        `https://stylenest.up.railway.app/api/cart/${id}/update/`,
+        `${BACKEND_URL}/api/cart/${id}/update/`,
         { quantity: newQty },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -64,7 +65,7 @@ export default function CartPage() {
 
     try {
       await axios.delete(
-        `https://stylenest.up.railway.app/api/cart/${id}/remove/`,
+        `${BACKEND_URL}/api/cart/${id}/remove/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
@@ -114,7 +115,7 @@ export default function CartPage() {
                   <CartItem
                     key={item.id}
                     item={item}
-                    apiBaseUrl="https://stylenest.up.railway.app"
+                    apiBaseUrl={BACKEND_URL}
                     onQtyChange={handleQuantityChange}
                     onRemove={handleRemove}
                   />

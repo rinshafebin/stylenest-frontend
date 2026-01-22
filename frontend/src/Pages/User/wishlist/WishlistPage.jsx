@@ -14,6 +14,7 @@ const WishlistPage = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   // Fetch wishlist from API
   const fetchWishlist = useCallback(async () => {
@@ -25,7 +26,7 @@ const WishlistPage = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://stylenest.up.railway.app/api/cart/wishlist/`,
+        `${BACKEND_URL}/api/cart/wishlist/`,
         { headers: { Authorization: `Bearer ${token.trim()}` } }
       );
 
@@ -54,7 +55,7 @@ const WishlistPage = () => {
     if (!token) return;
     try {
       await axios.delete(
-        `https://stylenest.up.railway.app/api/cart/wishlist/${id}/`,
+        `${BACKEND_URL}/api/cart/wishlist/${id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWishlistItems((prev) => prev.filter((item) => item.id !== id));
@@ -70,7 +71,7 @@ const WishlistPage = () => {
     if (!token) return;
     try {
       await axios.post(
-        `https://stylenest.up.railway.app/api/cart/wishlist/add/`,
+        `${BACKEND_URL}/api/cart/wishlist/add/`,
         { product_id: productId, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );

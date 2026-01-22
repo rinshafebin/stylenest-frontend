@@ -5,6 +5,7 @@ import axios from 'axios';
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [formData, setFormData] = useState({
     username: '',
     phone_number: '',
@@ -35,7 +36,7 @@ const Profile = () => {
   const handleUpdate = useCallback(async () => {
     try {
       const res = await axios.patch(
-        `https://stylenest.up.railway.app/api/user/profile/`,
+        `${BACKEND_URL}/api/user/profile/`,
         formData
       );
       setUser(res.data.data);

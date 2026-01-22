@@ -11,6 +11,7 @@ const OrdersPage = () => {
   const { token } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchOrders = useCallback(async () => {
     if (!token) return;
@@ -18,7 +19,7 @@ const OrdersPage = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://stylenest.up.railway.app/api/orders/user-orders/`,
+        `${BACKEND_URL}/api/orders/user-orders/`,
         {
           headers: { Authorization: `Bearer ${token.trim()}` },
         }

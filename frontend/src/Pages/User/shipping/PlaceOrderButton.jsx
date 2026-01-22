@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }) {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const handlePlaceOrder = useCallback(async () => {
     if (!shippingInfo) return alert("Please select a shipping address.");
@@ -17,7 +18,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
 
       // Create order
       const res = await axios.post(
-        `https://stylenest.up.railway.app/api/orders/create/`,
+        `${BACKEND_URL}/api/orders/create/`,
         {
           payment_method: selectedPayment,
           shipping_address: shippingInfo.id,
@@ -45,7 +46,7 @@ function PlaceOrderButton({ selectedPayment, shippingInfo, loading, setLoading }
         handler: async (response) => {
           try {
             await axios.post(
-              `https://stylenest.up.railway.app/api/orders/verify-payment/`,
+              `${BACKEND_URL}/api/orders/verify-payment/`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
